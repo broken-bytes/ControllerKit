@@ -20,7 +20,7 @@ namespace BrokenBytes::ControllerKit::HID {
 	auto WriteToDevice(HIDDevice device, byte* data, size_t length) -> size_t {
 		DWORD written = 0;
 		if(!WriteFile(device, data, length, &written, nullptr)) {
-			throw std::exception("Could not write to file handle");
+			return 0;
 		}
 		return written;
 	}
@@ -28,7 +28,7 @@ namespace BrokenBytes::ControllerKit::HID {
 	auto ReadFromDevice(HIDDevice device, byte* data, size_t length) -> size_t {
 		DWORD read = 0;
 		if(!ReadFile(device, data, 255, &read, nullptr)) {
-			throw std::exception("Could not read from file handle");
+			return 0;
 		}
 		return read;
 	}

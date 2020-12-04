@@ -1,53 +1,68 @@
 #pragma once
+#include <functional>
 #include <thread>
 #include <map>
 
-#include "ControllerKit.hxx"
 #include "Math.hxx"
 
-using namespace BrokenBytes::ControllerKit::Math;
-
-
-namespace BrokenBytes::ControllerKit {
+namespace BrokenBytes::ControllerKit::Types {
+	enum class Trigger;
 	enum class ControllerType;
 	enum class ButtonState;
+	enum class Button;
+	enum class DPadDirection;
 }
 
 namespace BrokenBytes::ControllerKit::Internal {
 	struct InputReport {
-		std::map<Button, bool> Buttons;
-		Vector2<float> LeftStick;
-		Vector2<float> RightStick;
+		std::map<Types::Button, bool> Buttons;
+		Math::Vector2<float> LeftStick;
+		Math::Vector2<float> RightStick;
 		float LeftTrigger;
 		float RightTrigger;
-		DPadDirection DPad;
+		Types::DPadDirection DPad;
 	};
 	
-
 	class Controller
 	{
 	public:
-		Controller(ControllerType type);
+		Controller(Types::ControllerType type);
 		Controller(Controller&) = delete;
 		Controller(Controller&&) = delete;
-		virtual ~Controller() = default;
+		virtual ~Controller();
 		Controller& operator=(const Controller&) = delete;
 		Controller& operator=(Controller&&) = delete;
 
+		[[nodiscard]] static auto Controllers() -> std::map<uint8_t, Controller*>;
+		static auto OnControllerConnected(
+			std::function<void(uint8_t id, Types::ControllerType type)> callback
+		) -> void;
+		static auto OnControllerDisconnected(
+			std::function<void(uint8_t id)> callback
+		) -> void;
 		
-		[[nodiscard]] virtual Vector2<float> GetStick(uint8_t id) const;
-		[[nodiscard]] virtual float GetTrigger(Trigger t) const;
-		[[nodiscard]] virtual DPadDirection GetDPadDirection() const;
-		[[nodiscard]] virtual ButtonState GetButtonState(Button button) const;
-		[[nodiscard]] ControllerType Type() const;
+		[[nodiscard]] virtual auto GetStick(uint8_t id) const -> Math::Vector2<float>;
+		[[nodiscard]] virtual auto GetTrigger(Types::Trigger t) const -> float;
+		[[nodiscard]] virtual auto GetDPadDirection() const -> Types::DPadDirection;
+		[[nodiscard]] virtual auto GetButtonState(
+			Types::Button button
+		) const -> Types::ButtonState;
+		[[nodiscard]] auto Type() const -> Types::ControllerType;
 
 	protected:
-		void SetInputReport(InputReport report);
+		static inline std::map<uint8_t, Controller*> controllers;
+		auto SetInputReport(InputReport report) -> void;
 
 	private:
+		static inline std::function<void(
+			uint8_t id,
+			Types::ControllerType type
+		)> _onConnected;
+		static inline std::function<void(uint8_t id)> _onDisconnected;
 		InputReport _lastReport;
 		InputReport _report;
-		ControllerType _type;
+		Types::ControllerType _type;
+		uint8_t _number;
 	};
 
 }

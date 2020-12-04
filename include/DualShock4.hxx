@@ -4,6 +4,7 @@
 #include <bitset>
 
 #include "HIDController.hxx"
+#include "Types.hxx"
 #include "interfaces/IGyroscopeController.hxx"
 #include "interfaces/ILightbarController.hxx"
 #include "interfaces/IRumbleController.hxx"
@@ -26,22 +27,25 @@ namespace BrokenBytes::ControllerKit::Internal
 		DualShock4& operator=(const DualShock4&) = delete;
 		DualShock4& operator=(DualShock4&&) = delete;
 		~DualShock4();
+
+		static auto Create(char* path)->DualShock4*;
+		static auto Remove(char* path)->void;
 		
 	private:
 		struct ButtonState {
 			std::bitset<14> buttons;
 		};
 
-		const std::array<DPadDirection, 9> _dPadDirections = {
-			DPadDirection::Up,
-			DPadDirection::RightUp,
-			DPadDirection::Right,
-			DPadDirection::RightDown,
-			DPadDirection::Down,
-			DPadDirection::LeftDown,
-			DPadDirection::Left,
-			DPadDirection::LeftUp,
-			DPadDirection::None
+		const std::array<Types::DPadDirection, 9> _dPadDirections = {
+			Types::DPadDirection::Up,
+			Types::DPadDirection::RightUp,
+			Types::DPadDirection::Right,
+			Types::DPadDirection::RightDown,
+			Types::DPadDirection::Down,
+			Types::DPadDirection::LeftDown,
+			Types::DPadDirection::Left,
+			Types::DPadDirection::LeftUp,
+			Types::DPadDirection::None
 		};
 
 		const uint8_t _pollRateMs = 3;
@@ -51,15 +55,15 @@ namespace BrokenBytes::ControllerKit::Internal
 		ButtonState _buttons;
 
 		// Sticks
-		Vector2<float> _leftStick{ 0, 0 };
-		Vector2<float> _rightStick{ 0, 0 };
+		Math::Vector2<float> _leftStick{ 0, 0 };
+		Math::Vector2<float> _rightStick{ 0, 0 };
 
 		// DPad
-		DPadDirection _dPad = DPadDirection::None;
+		Types::DPadDirection _dPad = Types::DPadDirection::None;
 		// L2, R2
 		std::array<uint8_t, 2> _triggers{ 0, 0 };
 
-		Color _ledColor{ 0,0,0 };
+		Types::Color _ledColor{ 0,0,0 };
 		std::array<uint8_t, 2> _rumble { 0, 0 };
 		std::array<uint8_t, 2> _flashing = { 0,0 };
 		
@@ -70,10 +74,10 @@ namespace BrokenBytes::ControllerKit::Internal
 		void WriteReports();
 		void ReadReports();
 	public:
-		Math::Vector3<float> ReadGyroscope() override;
-		Math::Vector3<float> ReadAcceleration() override;
-		void SetLightbarColor(Color c) override;
-		void SetRumble(Rumble motor, uint8_t strength) override;
-		std::vector<Math::Vector2<uint8_t>> GetTouches() override;
+		auto ReadGyroscope() -> Math::Vector3<float> override;
+		auto ReadAcceleration() -> Math::Vector3<float> override;
+		auto SetLightbarColor(Types::Color c) -> void override;
+		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
+		auto GetTouches() -> std::vector<Math::Vector2<uint8_t>> override;
 	};
 }

@@ -1,12 +1,35 @@
 ﻿#include "Controller.hxx"
-#include "ControllerKit.hxx"
+#include "Types.hxx"
 
+using namespace BrokenBytes::ControllerKit::Math;
+using namespace BrokenBytes::ControllerKit::Types;
 
 namespace BrokenBytes::ControllerKit::Internal {
 	Controller::Controller(ControllerType type) {
 		_lastReport = {};
 		_report = {};
 		this->_type = type;
+		for (int x = 0; x < controllers.size(); x++) {
+			if(controllers[x] == nullptr) {
+				controllers.emplace(x, this);
+				_onConnected(x, type);
+			}
+		}
+	}
+
+	Controller::~Controller() {
+		_onDisconnected(this->_number);
+	}
+
+	auto Controller::Controllers() -> std::map<uint8_t, Controller*> {
+		return controllers;
+	}
+
+	auto Controller::OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> callback) -> void {
+		_onConnected = callback;
+	}
+	auto Controller::OnControllerDisconnected(std::function<void(uint8_t id)> callback) -> void {
+		_onDisconnected = callback;
 	}
 
 	Vector2<float> Controller::GetStick(uint8_t id) const {
@@ -16,18 +39,18 @@ namespace BrokenBytes::ControllerKit::Internal {
 		return _report.RightStick;
 	}
 
-	float Controller::GetTrigger(Trigger t) const {
+	auto Controller::GetTrigger(Trigger t) const -> float {
 		if (t == Trigger::Left) {
 			return _report.LeftTrigger;
 		}
 		return _report.RightTrigger;
 	}
 
-	DPadDirection Controller::GetDPadDirection() const {
+	auto Controller::GetDPadDirection() const -> DPadDirection {
 		return _report.DPad;
 	}
 
-	ButtonState Controller::GetButtonState(Button button) const {
+	auto Controller::GetButtonState(Button button) const -> ButtonState {
 		uint8_t state = 0;
 		state += _report.Buttons.at(button);
 		state += _report.Buttons.at(button) * 2;
@@ -41,11 +64,11 @@ namespace BrokenBytes::ControllerKit::Internal {
 		}
 	}
 
-	ControllerType Controller::Type() const {
+	auto Controller::Type() const -> ControllerType {
 		return _type;
 	}
 
-	void Controller::SetInputReport(InputReport report) {
+	auto Controller::SetInputReport(InputReport report) -> void {
 		_lastReport = report;
 		_report = report;
 	}

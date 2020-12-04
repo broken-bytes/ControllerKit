@@ -4,7 +4,7 @@
 #include <array>
 #include <iostream>
 
-#include "crc/CRC.h"
+//#include <crc/CRC.h>
 
 namespace BrokenBytes::ControllerKit::Math {
 	template<typename T,
@@ -60,7 +60,8 @@ namespace BrokenBytes::ControllerKit::Math {
 	/// <param name="bytes"></param>
 	/// <returns>The CRC Checksum split into 4 bytes</returns>
 	inline auto GetCRCFromBytes(unsigned char* bytes, size_t length) -> std::array<uint8_t, 4> {
-		std::uint32_t crc = CRC::Calculate(bytes, length, CRC::CRC_32());
+		//std::uint32_t crc = CRC::Calculate(bytes, length, CRC::CRC_32());
+		uint32_t crc = 0;
 		auto arr = std::array<uint8_t, 4> {
 			static_cast<unsigned char>(crc),
 				static_cast<unsigned char>(crc >> 8),

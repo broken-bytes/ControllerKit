@@ -1,17 +1,25 @@
 #pragma once
 
+#include "Controller.hxx"
 #include "XInput.hxx"
 #include "interfaces/IRumbleController.hxx"
 #include "interfaces/IImpulseTriggerController.hxx"
 
 
+namespace Input = winrt::Windows::Gaming::Input;
+
 namespace BrokenBytes::ControllerKit::Internal {
-	class XInputController : IRumbleController, IImpulseTriggerController {
+	class GamingInputController : Controller, IRumbleController, IImpulseTriggerController {
 	public:
-		XInputController(XInputDevice gamepad);
-		void SetRumble(Rumble motor, uint8_t strength) override;
-		void SetVibration(Rumble r) override;
+		GamingInputController(const Input::Gamepad* gamepad);
+
+		static auto Create(const Input::Gamepad* gamepad)->GamingInputController*;
+		static auto Remove(const Input::Gamepad* gamepad) ->void;
+		
+		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
+
+		auto Gamepad() const -> const Input::Gamepad*;
 	private:
-		XInputDevice _gamepad;
+		const winrt::Windows::Gaming::Input::Gamepad* _gamepad;
 	};
 }

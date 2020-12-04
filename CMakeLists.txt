@@ -13,9 +13,9 @@ set(src_include
 	include/USB.hxx
 	include/HID.hxx
 	include/Math.hxx
+	include/Types.hxx
     	include/Controller.hxx
 	include/HIDController.hxx
-	include/XOne.hxx
 	include/DualShock4.hxx
 	include/DualSense.hxx
 	
@@ -41,7 +41,6 @@ set(include_win
 set(src
 	src/ControllerKit.cxx
 	src/Controller.cxx
-	src/XOne.cxx
 	src/DualShock4.cxx
 	src/DualSense.cxx
 	src/HIDController.cxx
@@ -62,8 +61,7 @@ add_library(ControllerKit ${src} ${src_include} ${src_interfaces})
 if(MSVC)
 	add_executable(Test WIN32 test/main.cxx)
 	target_sources(ControllerKit PRIVATE ${src_win} ${include_win})
-	target_link_libraries(ControllerKit PUBLIC hid)
-	target_link_libraries(ControllerKit PUBLIC Kernel32 WindowsApp)
+	target_link_libraries(ControllerKit PUBLIC hid Kernel32 WindowsApp runtimeobject)
 endif()
 target_link_libraries(Test PUBLIC ControllerKit)
 target_link_directories(ControllerKit PUBLIC lib/)

@@ -7,7 +7,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	public:
 		virtual ~IImpulseTriggerController() = default;
 
-		virtual auto SetRumble(Rumble r) -> void = 0;
+		virtual auto SetRumble(Rumble motor, uint8_t strength) -> void = 0;
 		
 	};
 }

@@ -5,6 +5,8 @@
 #include "DualShock4.hxx"
 #include "ControllerKit.hxx"
 
+using namespace BrokenBytes::ControllerKit::Math;
+using namespace BrokenBytes::ControllerKit::Types;
 
 namespace BrokenBytes::ControllerKit::Internal {
 	DualShock4::DualShock4(char* path) :
@@ -18,6 +20,29 @@ namespace BrokenBytes::ControllerKit::Internal {
 
 	DualShock4::~DualShock4() {
 		HIDController::~HIDController();
+	}
+
+	auto DualShock4::Create(char* path) -> DualShock4* {
+		for (auto item : Controller::controllers) {
+			if (typeid(item.second) == typeid(DualShock4)) {
+				auto* ds = dynamic_cast<DualShock4*>(item.second);
+				if(ds->Path() == path) {
+					return ds;
+				}
+			}
+		}
+		return new DualShock4(path);
+	}
+	auto DualShock4::Remove(char* path) -> void {
+		for (auto item : Controller::controllers) {
+			if (typeid(item.second) == typeid(DualShock4)) {
+				auto* ds = dynamic_cast<DualShock4*>(item.second);
+				if (ds->Path() == path) {
+					delete ds;
+					break;
+				}
+			}
+		}
 	}
 
 	void DualShock4::Routine() {

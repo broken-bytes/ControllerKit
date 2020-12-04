@@ -1,6 +1,7 @@
 #pragma once
 
 #include "HIDController.hxx"
+#include "Types.hxx"
 #include "interfaces/IGyroscopeController.hxx"
 #include "interfaces/ILightbarController.hxx"
 #include "interfaces/IRumbleController.hxx"
@@ -26,15 +27,18 @@ namespace BrokenBytes::ControllerKit::Internal {
 		DualSense(const DualSense&&) = delete;
 		DualSense& operator=(const DualSense&) = delete;
 		DualSense& operator=(DualSense&&) = delete;
+
+		static auto Create(char* path)->DualSense*;
+		static auto Remove(char* path)->void;
 		
 		auto ReadGyroscope() -> Math::Vector3<float> override;
 		auto ReadAcceleration() -> Math::Vector3<float> override;
-		auto SetLightbarColor(Color c) -> void override;
+		auto SetLightbarColor(Types::Color c) -> void override;
 		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
 		auto GetTouches()->std::vector<Math::Vector2<uint8_t>> override;
 		auto SetTrigger(
-			Trigger trigger,
-			AdaptiveTriggerMode mode,
+			Types::Trigger trigger,
+			Types::AdaptiveTriggerMode mode,
 			Params params
 		) -> void override;
 	private:
@@ -63,8 +67,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		bool _isDirty;
 		uint8_t _reportPermissionFlags;
 		unsigned char* _report;
-		std::map<Trigger, TriggerConfig> _triggers = {};
-		Color _color;
+		std::map<Types::Trigger, TriggerConfig> _triggers = {};
+		Types::Color* _color;
 
 		
 		auto SetDirty() -> void;

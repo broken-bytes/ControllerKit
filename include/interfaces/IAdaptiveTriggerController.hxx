@@ -18,12 +18,15 @@ namespace BrokenBytes::ControllerKit::Internal {
 		};
 
 		struct TriggerConfig {
-			AdaptiveTriggerMode Mode;
+			Types::AdaptiveTriggerMode Mode;
 			Params Params;
 		};
 
 		virtual ~IAdaptiveTriggerController() = default;
 
-		virtual auto SetTrigger(Trigger trigger, AdaptiveTriggerMode mode, Params params) -> void = 0;
+		virtual auto SetTrigger(
+			Types::Trigger trigger,
+			Types::AdaptiveTriggerMode mode, Params params
+		) -> void = 0;
 	};
 }

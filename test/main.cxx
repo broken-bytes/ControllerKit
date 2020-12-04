@@ -2,7 +2,7 @@
 #define UNICODE
 #endif 
 
-#include <windows.h>
+#include <Windows.h>
 
 #include <ControllerKit.hxx>
 #include <iostream>
@@ -14,9 +14,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow)
 {
-    AllocConsole();
-    AttachConsole(ATTACH_PARENT_PROCESS);
-    ControllerKit::Init();
     // Register the window class.
     const wchar_t CLASS_NAME[] = L"Sample Window Class";
 
@@ -51,9 +48,27 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
     }
 
     ShowWindow(hwnd, nCmdShow);
+	UpdateWindow(hwnd);
 
+    std::cout << "Test" << std::endl;
     // Run the message loop.
 
+    ControllerKit::Init();
+    ControllerKit::OnControllerConnected([](uint8_t id, ControllerKit::Types::ControllerType type) {
+        std::cout << id << std::endl;
+        });
+    ControllerKit::OnControllerConnected([](
+        uint8_t id,
+        ControllerKit::Types::ControllerType type
+        ) {
+            std::cout << "" << std::endl;
+        });
+    ControllerKit::OnControllerDisconnected([](
+        uint8_t id
+        ) {
+            std::cout << "" << std::endl;
+        });
+	
     MSG msg = { };
     while (GetMessage(&msg, NULL, 0, 0))
     {
