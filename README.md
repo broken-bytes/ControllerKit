@@ -1,4 +1,4 @@
-![Windows](https://github.com/broken-bytes/ControllerKit/workflows/Windows/badge.svg) ![macOS](https://github.com/broken-bytes/ControllerKit/workflows/macOS/badge.svg)
+![Windows](https://github.com/broken-bytes/ControllerKit/workflows/Windows/badge.svg) ![macOS](https://github.com/broken-bytes/ControllerKit/workflows/macOS/badge.svg) ![Ubuntu](https://github.com/broken-bytes/ControllerKit/workflows/Ubuntu/badge.svg)
 
 # ControllerKit
 
