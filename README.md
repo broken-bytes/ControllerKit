@@ -1,4 +1,4 @@
-![Windows](https://github.com/broken-bytes/ControllerKit/workflows/Windows/badge.svg) ![macOS](https://github.com/broken-bytes/ControllerKit/workflows/macOS/badge.svg) ![Ubuntu](https://github.com/broken-bytes/ControllerKit/workflows/Ubuntu/badge.svg) https://img.shields.io/badge/C%2B%2B-17-blue
+![Windows](https://github.com/broken-bytes/ControllerKit/workflows/Windows/badge.svg) ![macOS](https://github.com/broken-bytes/ControllerKit/workflows/macOS/badge.svg) ![Ubuntu](https://github.com/broken-bytes/ControllerKit/workflows/Ubuntu/badge.svg) ![C++17](https://img.shields.io/badge/C%2B%2B-17-blue)
 
 # ControllerKit
 
