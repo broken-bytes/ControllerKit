@@ -56,16 +56,11 @@ namespace BrokenBytes::ControllerKit::Interface {
 	}
 	
 	auto OnGamepadAdded(const winrt::Windows::Foundation::IInspectable& sender, const Gamepad& gamepad) -> void {
-		W10_CONTROLLERS.emplace_back(new GamingInputController(&gamepad));
+		Controller::Create<GamingInputController, const Gamepad*>(&gamepad);
 	}
 
 	auto OnGamepadRemoved(const winrt::Windows::Foundation::IInspectable& sender, const Gamepad& gamepad) -> void {
-		for(auto& item: W10_CONTROLLERS) {
-			if (item->Gamepad() == &gamepad) {
-				delete item;
-			}
-		}
-		W10_CONTROLLERS.emplace_back(new GamingInputController(&gamepad));
+		Controller::Remove<GamingInputController, const Gamepad*>(&gamepad);
 	}
 	
 	void Init() {
@@ -95,18 +90,16 @@ namespace BrokenBytes::ControllerKit::Interface {
 			}
 			// Specific controllers check
 
-			Controller* controller;
-
 			// Playstation Controllers
 			if (item.VendorId == SONY) {
 				// DualShock 4
 				if (item.ProductId == DS4_1 || item.ProductId == DS4_2) {
-					controller = DualShock4::Create(item.Path);
+					Controller::Create<DualShock4, char*>(item.Path);
 					continue;
 				}
 				// DualSense
 				if (item.ProductId == DS_1) {
-					controller = DualSense::Create(item.Path);
+					Controller::Create<DualSense, char*>(item.Path);
 					continue;
 				}
 			}

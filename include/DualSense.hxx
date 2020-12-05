@@ -27,9 +27,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		DualSense(const DualSense&&) = delete;
 		DualSense& operator=(const DualSense&) = delete;
 		DualSense& operator=(DualSense&&) = delete;
-
-		static auto Create(char* path)->DualSense*;
-		static auto Remove(char* path)->void;
+		bool operator==(char* path) const;
 		
 		auto ReadGyroscope() -> Math::Vector3<float> override;
 		auto ReadAcceleration() -> Math::Vector3<float> override;

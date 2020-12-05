@@ -26,10 +26,8 @@ namespace BrokenBytes::ControllerKit::Internal
 		DualShock4(const DualShock4&&) = delete;
 		DualShock4& operator=(const DualShock4&) = delete;
 		DualShock4& operator=(DualShock4&&) = delete;
+		bool operator==(char* path) const;
 		~DualShock4();
-
-		static auto Create(char* path)->DualShock4*;
-		static auto Remove(char* path)->void;
 		
 	private:
 		struct ButtonState {

@@ -18,9 +18,6 @@
 namespace BrokenBytes::ControllerKit {
 	DLL_EXPORT void Init();
 	DLL_EXPORT auto Controllers()->std::vector<Types::Controller>;
-	DLL_EXPORT auto HasFeature(uint8_t controller, Types::Feature feature) -> bool;
-	DLL_EXPORT auto GetButtonState(int controller, Types::Button button)-> Types::ButtonState;
-	DLL_EXPORT auto GetAxis(int controller, Types::Axis axis) -> float;
 	DLL_EXPORT auto GetControllerType(int controller)-> Types::ControllerType;
 	DLL_EXPORT auto OnControllerConnected(
 		std::function<void(uint8_t id, Types::ControllerType type)> controller

@@ -20,28 +20,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		HIDController::~HIDController();
 	}
 
-	auto DualSense::Create(char* path) -> DualSense* {
-		for (auto item : controllers) {
-			if (typeid(item.second) == typeid(DualSense)) {
-				auto* ds = dynamic_cast<DualSense*>(item.second);
-				if (ds->Path() == path) {
-					return ds;
-				}
-			}
-		}
-		return new DualSense(path);
-	}
-
-	auto DualSense::Remove(char* path) -> void {
-		for (auto item : controllers) {
-			if (typeid(item.second) == typeid(DualSense)) {
-				auto* ds = dynamic_cast<DualSense*>(item.second);
-				if (ds->Path() == path) {
-					delete ds;
-					break;
-				}
-			}
-		}
+	bool DualSense::operator==(char* path) const {
+		return Path() == path;
 	}
 
 	auto DualSense::ReadGyroscope() -> Math::Vector3<float> {

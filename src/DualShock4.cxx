@@ -18,31 +18,12 @@ namespace BrokenBytes::ControllerKit::Internal {
 		//_thread = std::thread(&DualShock4::Routine, this);
 	}
 
-	DualShock4::~DualShock4() {
-		HIDController::~HIDController();
+	bool DualShock4::operator==(char* path) const {
+		return Path() == path;
 	}
 
-	auto DualShock4::Create(char* path) -> DualShock4* {
-		for (auto item : Controller::controllers) {
-			if (typeid(item.second) == typeid(DualShock4)) {
-				auto* ds = dynamic_cast<DualShock4*>(item.second);
-				if(ds->Path() == path) {
-					return ds;
-				}
-			}
-		}
-		return new DualShock4(path);
-	}
-	auto DualShock4::Remove(char* path) -> void {
-		for (auto item : Controller::controllers) {
-			if (typeid(item.second) == typeid(DualShock4)) {
-				auto* ds = dynamic_cast<DualShock4*>(item.second);
-				if (ds->Path() == path) {
-					delete ds;
-					break;
-				}
-			}
-		}
+	DualShock4::~DualShock4() {
+		HIDController::~HIDController();
 	}
 
 	void DualShock4::Routine() {

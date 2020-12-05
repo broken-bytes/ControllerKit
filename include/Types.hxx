@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Interface.hxx"
+
 namespace BrokenBytes::ControllerKit::Types {
 	struct Color {
 		uint8_t R;
@@ -92,7 +94,34 @@ namespace BrokenBytes::ControllerKit::Types {
 
 
 	struct Controller {
-		uint8_t Id;
+		uint8_t Player;
 		ControllerType Type;
+
+		auto HasFeature(uint8_t controller, Types::Feature feature) -> bool {
+			// TODO: Feature detection
+			return true;
+		}
+
+		auto GetButtonState(Types::Button button) -> ButtonState {
+			return Interface::GetControllers()[Player]->GetButtonState(button);
+		}
+
+		auto GetAxis(Types::Axis axis) -> float {
+			switch (axis) {
+			case Types::Axis::LeftX:
+				return Interface::GetControllers()[Player]->GetStick(0).X;
+			case Types::Axis::LeftY:
+				return Interface::GetControllers()[Player]->GetStick(0).Y;
+			case Types::Axis::RightX:
+				return Interface::GetControllers()[Player]->GetStick(1).X;
+			case Types::Axis::RightY:
+				return Interface::GetControllers()[Player]->GetStick(1).Y;
+			case Types::Axis::LeftTrigger:
+				return Interface::GetControllers()[Player]->GetTrigger(Types::Trigger::Left);
+			case Types::Axis::RightTrigger:
+				return Interface::GetControllers()[Player]->GetTrigger(Types::Trigger::Right);
+			}
+			return 0;
+		}
 	};
 }

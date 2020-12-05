@@ -31,19 +31,6 @@ namespace BrokenBytes::ControllerKit {
 		return list;
 	}
 
-	bool HasFeature(uint8_t controller, Types::Feature feature) {
-		// TODO: Feature detection
-		return true;
-	}
-
-	ButtonState GetButtonState(int controller, Types::Button button) {
-		return controllers[controller]->GetButtonState(button);
-	}
-
-	ControllerType GetControllerType(int controller) {
-		return controllers[controller]->Type();
-	}
-
 	auto OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> controller) -> void {
 		Interface::OnControllerConnected([controller](uint8_t id, Internal::Controller* c)->void {
 			controller(id, c->Type());
@@ -53,25 +40,6 @@ namespace BrokenBytes::ControllerKit {
 		Interface::OnControllerDisconnected([controller](uint8_t id) {
 			controller(id);
 		});
-	}
-
-
-	float GetAxis(int controller, Types::Axis axis) {
-		switch (axis) {
-		case Types::Axis::LeftX:
-			return controllers[controller]->GetStick(0).X;
-		case Types::Axis::LeftY:
-			return controllers[controller]->GetStick(0).Y;
-		case Types::Axis::RightX:
-			return controllers[controller]->GetStick(1).X;
-		case Types::Axis::RightY:
-			return controllers[controller]->GetStick(1).Y;
-		case Types::Axis::LeftTrigger:
-			return controllers[controller]->GetTrigger(Types::Trigger::Left);
-		case Types::Axis::RightTrigger:
-			return controllers[controller]->GetTrigger(Types::Trigger::Right);
-		}
-		return 0;
 	}
 }
 

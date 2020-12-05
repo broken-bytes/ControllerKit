@@ -25,6 +25,17 @@ namespace BrokenBytes::ControllerKit::Internal {
 		return controllers;
 	}
 
+	auto Controller::Add(Controller* controller) -> void {
+		for(int x = 0; x < controllers.size(); x++) {
+			if(controllers[x] == nullptr) {
+				controllers[x] = controller;
+				return;
+			}
+		}
+		controllers.emplace(controllers.size(), controller);
+		_onConnected(controllers.size() - 1, controller->Type());
+	}
+
 	auto Controller::OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> callback) -> void {
 		_onConnected = callback;
 	}
