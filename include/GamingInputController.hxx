@@ -5,17 +5,18 @@
 #include "interfaces/IImpulseTriggerController.hxx"
 #include <winrt/Windows.Gaming.Input.h>
 
-namespace Input = winrt::Windows::Gaming::Input;
+namespace Gaming = winrt::Windows::Gaming::Input;
+namespace Foundation = winrt::Windows::Foundation::Collections;
 
 namespace BrokenBytes::ControllerKit::Internal {
 	class GamingInputController : Controller, IRumbleController, IImpulseTriggerController {
 	public:
-		GamingInputController(Input::Gamepad* addr);
+		GamingInputController();
 		auto Equals(void* data) -> bool override;
 
 		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
 	private:
-		Input::Gamepad* _addr;
-		std::thread _t;
+		static inline Foundation::IVectorView<Gaming::Gamepad> _gamepads;
+		Gaming::Gamepad* _addr;
 	};
 }

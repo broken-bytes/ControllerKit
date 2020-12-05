@@ -54,6 +54,16 @@ namespace BrokenBytes::ControllerKit::Internal {
 			Add(reinterpret_cast<Controller*>(ds));
 			return ds;
 		}
+
+		template<typename T,
+			typename = std::enable_if_t<std::is_base_of_v<Controller, T>>
+		>
+			static auto Create() -> T* {
+			auto ds = new T();
+			Add(reinterpret_cast<Controller*>(ds));
+			return ds;
+		}
+
 		template<typename T,
 			typename D,
 			typename = std::enable_if_t<std::is_base_of_v<Controller, T>>

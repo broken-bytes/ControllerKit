@@ -56,13 +56,12 @@ namespace BrokenBytes::ControllerKit::Interface {
 	}
 	
 	auto OnGamepadAdded(const winrt::Windows::Foundation::IInspectable& sender, const Gamepad& gamepad) -> void {
-		auto* g = const_cast<Gamepad*>(&gamepad);
-		Controller::Create<GamingInputController, Gamepad*>(g);
+		auto* ptr = reinterpret_cast<const uint64_t*>(&gamepad);
+		Controller::Create<GamingInputController>();
 	}
 
 	auto OnGamepadRemoved(const winrt::Windows::Foundation::IInspectable& sender, const Gamepad& gamepad) -> void {
-		auto* g = const_cast<Gamepad*>(&gamepad);
-		//Controller::Remove<GamingInputController, Gamepad*>(g);
+		Controller::Remove<GamingInputController, Gamepad*>(&const_cast<Gamepad&>(gamepad));
 	}
 	
 	void Init() {
