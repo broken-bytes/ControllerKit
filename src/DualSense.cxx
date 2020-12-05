@@ -21,7 +21,11 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	bool DualSense::operator==(char* path) const {
-		return Path() == path;
+		return true;
+	}
+	
+	bool DualSense::operator==(const char* path) const {
+		return true;
 	}
 
 	auto DualSense::ReadGyroscope() -> Math::Vector3<float> {

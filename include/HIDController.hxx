@@ -4,7 +4,6 @@
 #include "HID.hxx"
 
 namespace BrokenBytes::ControllerKit::Internal {
-
 	/// <summary>
 	/// The delay before a device is considered disconnected
 	/// </summary>
@@ -14,6 +13,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 	public:
 		HIDController(char* path, Types::ControllerType type);
 		~HIDController();
+		virtual bool operator==(char* path) const;
+		virtual bool operator==(const char* path) const;
+		auto Equals(void* data) -> bool override;
 
 	protected:
 		auto SendReport(HID::byte* data, size_t length) const -> void;

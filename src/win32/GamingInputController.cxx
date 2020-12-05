@@ -10,8 +10,16 @@ namespace BrokenBytes::ControllerKit::Internal {
 		_gamepad = gamepad;
 	}
 
-	bool GamingInputController::operator==(Input::Gamepad* gamepad) const {
+	bool GamingInputController::operator==(const Input::Gamepad* gamepad) const {
 		return gamepad == _gamepad;
+	}
+
+	bool GamingInputController::operator==(const Input::Gamepad& rhs) const {
+		return &rhs == _gamepad;
+	}
+
+	auto GamingInputController::Equals(void* data) -> bool {
+		return this->_gamepad == data;
 	}
 
 	void GamingInputController::SetRumble(Rumble motor, uint8_t strength) {

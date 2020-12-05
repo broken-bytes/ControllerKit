@@ -22,7 +22,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		float RightTrigger;
 		Types::DPadDirection DPad;
 	};
-
+	
 	class Controller
 	{
 	public:
@@ -32,6 +32,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		virtual ~Controller();
 		Controller& operator=(const Controller&) = delete;
 		Controller& operator=(Controller&&) = delete;
+		[[nodiscard]] virtual auto Equals(void* data) -> bool = 0;
+		
 
 		[[nodiscard]] static auto Controllers()->std::map<uint8_t, Controller*>;
 		template<typename T,
@@ -42,7 +44,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			for (auto item : controllers) {
 				if (typeid(item.second) == typeid(T)) {
 					auto* ds = dynamic_cast<T*>(item.second);
-					if (ds == data) {
+					if (ds->Equals(reinterpret_cast<void*>(data))) {
 						return ds;
 					}
 				}
@@ -60,7 +62,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			for (auto item : Controller::controllers) {
 				if (typeid(item.second) == typeid(T)) {
 					auto* device = dynamic_cast<T*>(item.second);
-					if (data == device) {
+					if (device->Equals(reinterpret_cast<void*>(data))) {
 						delete controllers[item.first];
 						_onDisconnected(item.first);
 						break;

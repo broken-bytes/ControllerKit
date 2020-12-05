@@ -18,10 +18,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 		//_thread = std::thread(&DualShock4::Routine, this);
 	}
 
-	bool DualShock4::operator==(char* path) const {
-		return Path() == path;
-	}
-
 	DualShock4::~DualShock4() {
 		HIDController::~HIDController();
 	}

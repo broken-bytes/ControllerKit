@@ -7,5 +7,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 		_gamepad = std::move(gamepad);
 	}
 
+	bool XInputController::operator==(XInputDevice device) const {
+		return &device == &_gamepad;
+	}
+
 	auto XInputController::SetRumble(Rumble motor, uint8_t strength) -> void {}
 }

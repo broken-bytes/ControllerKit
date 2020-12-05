@@ -13,6 +13,18 @@ namespace BrokenBytes::ControllerKit::Internal {
 		HID::CloseDevice(_device);
 	}
 
+	bool HIDController::operator==(char* path) const {
+		return _path == path;
+	}
+
+	bool HIDController::operator==(const char* path) const {
+		return _path == path;
+	}
+
+	auto HIDController::Equals(void* data) -> bool {
+		return this->Path() == data;
+	}
+
 	auto HIDController::SendReport(HID::byte* data, size_t length) const -> void {
 		HID::WriteToDevice(_device, _report, sizeof(_report));
 	}
