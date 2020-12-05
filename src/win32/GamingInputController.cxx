@@ -5,28 +5,23 @@
 
 namespace BrokenBytes::ControllerKit::Internal {
 	GamingInputController::GamingInputController(
-		const Input::Gamepad* gamepad
+		Input::Gamepad* addr
 	) : Controller(Types::ControllerType::XBoxOne), IRumbleController(), IImpulseTriggerController() {
-		_gamepad = gamepad;
-	}
+		_addr = addr;
 
-	bool GamingInputController::operator==(const Input::Gamepad* gamepad) const {
-		return gamepad == _gamepad;
-	}
-
-	bool GamingInputController::operator==(const Input::Gamepad& rhs) const {
-		return &rhs == _gamepad;
+		_t = std::thread([addr] {
+			while (true) {
+				auto pad = &addr;
+				auto reading = addr->GetCurrentReading();
+			}
+			});
 	}
 
 	auto GamingInputController::Equals(void* data) -> bool {
-		return this->_gamepad == data;
+		return this->_addr == data;
 	}
 
 	void GamingInputController::SetRumble(Rumble motor, uint8_t strength) {
-		
-	}
 
-	auto GamingInputController::Gamepad() const -> const winrt::Windows::Gaming::Input::Gamepad* {
-		return _gamepad;
 	}
 }

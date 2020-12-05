@@ -57,24 +57,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
     ControllerKit::OnControllerConnected([](uint8_t id, ControllerKit::Types::ControllerType type) {
         std::cout << id << std::endl;
         });
-    ControllerKit::OnControllerConnected([](
-        uint8_t id,
-        ControllerKit::Types::ControllerType type
-        ) {
-            std::cout << "" << std::endl;
-            Beep(1000, 1);
-        });
     ControllerKit::OnControllerDisconnected([](
         uint8_t id
         ) {
             std::cout << "" << std::endl;
-            Beep(1000, 1);
         });
-
-    auto controllers = ControllerKit::Controllers();
-	for(auto item: controllers) {
-        std::cout << item.GetAxis(ControllerKit::Types::Axis::LeftTrigger) << std::endl;
-	}
 	
     MSG msg = { };
     while (GetMessage(&msg, NULL, 0, 0))

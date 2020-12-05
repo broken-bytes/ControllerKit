@@ -1,0 +1,3 @@
+namespace BrokenBytes::ControllerKit::GamingInput {
+	
+}
