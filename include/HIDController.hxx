@@ -18,7 +18,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		auto Equals(void* data) -> bool override;
 
 	protected:
-		auto SendReport(HID::byte* data, size_t length) const -> void;
+		auto SendReport(HID::byte* data, size_t& length) const -> void;
 		auto ReadReport(HID::byte* data, size_t& length) const -> void;
 		[[nodiscard]] auto Device() const -> HID::HIDDevice;
 		[[nodiscard]] auto Path() const -> char*;

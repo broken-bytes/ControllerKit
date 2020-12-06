@@ -11,8 +11,9 @@
 #include "interfaces/ITouchpadController.hxx"
 
 
-namespace BrokenBytes::ControllerKit::Internal
-{
+namespace BrokenBytes::ControllerKit::Internal {
+	constexpr uint8_t DUALSHOCK4_READ_REPORT_SIZE = 48;
+	constexpr uint8_t DUALSHOCK4_WRITE_REPORT_SIZE = 32;
 	class DualShock4 :
 		public HIDController,
 		public IRumbleController,

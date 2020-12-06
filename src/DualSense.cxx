@@ -1,4 +1,5 @@
 #include "DualSense.hxx"
+#include "Mapper.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
 using namespace BrokenBytes::ControllerKit::Types;
@@ -13,7 +14,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		ITouchpadController() {
 		_report = new unsigned char[DUALSENSE_WRITE_REPORT_SIZE];
 		SetClear();
-		//_thread = std::thread(&DualSense::Routine, this);
+		_thread = std::thread([this]() {this->Routine(); });
 	}
 
 	DualSense::~DualSense() {
@@ -77,86 +78,25 @@ namespace BrokenBytes::ControllerKit::Internal {
 		_report[2] |= static_cast<uint8_t>(perm2);
 	}
 
-
 	auto DualSense::Routine() -> void {
 		auto* buffer = new unsigned char[DUALSENSE_READ_REPORT_SIZE];
-		size_t bytesRead = 0;
-		ReadReport(buffer, bytesRead);
-		if (bytesRead < DUALSENSE_READ_REPORT_SIZE) {
-			throw std::exception("Missing some bytes");
+		while (true) {
+			size_t bytesRead = 0;
+			ReadReport(buffer, bytesRead);
+			ParseRawInput(buffer);
+			if(bytesRead > 0) {
+				std::cout << ">" << std::endl;
+			}
+			if (_isDirty) {
+				size_t read = DUALSENSE_WRITE_REPORT_SIZE;
+				SendReport(_report, read);
+				SetClear();
+			}
 		}
-		if (_isDirty) {
-			SendReport(_report, sizeof(_report));
-			SetClear();
-		}
+		delete buffer;
 	}
 
 	auto DualSense::ParseRawInput(unsigned char* input) -> void {
-		auto buttons = std::map<Button, bool>();
-		buttons.emplace(Button::Square, input[8] & 0x10);
-		buttons.emplace(Button::Cross, input[8] & 0x20);
-		buttons.emplace(Button::Circle, input[8] & 0x40);
-		buttons.emplace(Button::Triangle, input[8] & 0x80);
-		buttons.emplace(Button::L1, input[9] & 0x01);
-		buttons.emplace(Button::R1, input[9] & 0x02);
-		buttons.emplace(Button::L2, input[9] & 0x04);
-		buttons.emplace(Button::R2, input[9] & 0x08);
-		buttons.emplace(Button::Create, input[9] & 0x10);
-		buttons.emplace(Button::Options, input[9] & 0x20);
-		buttons.emplace(Button::L3, input[9] & 0x40);
-		buttons.emplace(Button::R3, input[9] & 0x80);
-		buttons.emplace(Button::PS, input[10] & 0x01);
-		buttons.emplace(Button::TouchPad, input[10] & 0x02);
-		buttons.emplace(Button::PS_MUTE, input[10] & 0x04);
-		buttons.emplace(Button::TouchPad, input[10] & 0x02);
-		buttons.emplace(Button::TouchPad, input[10] & 0x02);
-
-		DPadDirection dpad = DPadDirection::None;
-		switch (input[8] & 0x000F) {
-		case 0b0000:
-			dpad = DPadDirection::Up;
-			break;
-		case 0b0001:
-			dpad = DPadDirection::RightUp;
-			break;
-		case 0b0010:
-			dpad = DPadDirection::Right;
-			break;
-		case 0b0011:
-			dpad = DPadDirection::RightDown;
-			break;
-		case 0b0100:
-			dpad = DPadDirection::Down;
-			break;
-		case 0b0101:
-			dpad = DPadDirection::LeftDown;
-			break;
-		case 0b0110:
-			dpad = DPadDirection::Left;
-			break;
-		case 0b0111:
-			dpad = DPadDirection::LeftUp;
-			break;
-		case 0b1000:
-			dpad = DPadDirection::None;
-			break;
-		}
-
-		InputReport rep{
-			buttons,
-			{
-				(static_cast<float>(input[1]) / 255.0f - 0.5f) * 2,
-			(static_cast<float>(input[2]) / 255.0f - 0.5f) * 2,
-			},
-			{
-				(static_cast<float>(input[3]) / 255.0f - 0.5f) * 2,
-				(static_cast<float>(input[4]) / 255.0f - 0.5f) * 2,
-			},
-			static_cast<float>(input[5]) / 255.0f,
-			static_cast<float>(input[6]) / 255.0f,
-			dpad
-		};
-
-		SetInputReport(rep);
+		SetInputReport(Mapping::InputReportFromDualSense(input));
 	}
 }

@@ -2,6 +2,8 @@
 #include <functional>
 #include <thread>
 #include <map>
+#include <type_traits>
+#include <typeinfo>
 
 #include "Math.hxx"
 
@@ -42,7 +44,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		>
 			static auto Create(D data) -> T* {
 			for (auto item : controllers) {
-				if (typeid(item.second) == typeid(T)) {
+				if (typeid(*item.second) == typeid(T)) {
 					auto* ds = dynamic_cast<T*>(item.second);
 					if (ds->Equals(reinterpret_cast<void*>(data))) {
 						return ds;
@@ -51,7 +53,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			}
 			auto ds = new T(data);
 
-			Add(reinterpret_cast<Controller*>(ds));
+			Add(dynamic_cast<Controller*>(ds));
 			return ds;
 		}
 
@@ -70,11 +72,11 @@ namespace BrokenBytes::ControllerKit::Internal {
 		>
 		static auto Remove(D data) -> void {
 			for (auto item : Controller::controllers) {
-				if (typeid(item.second) == typeid(T)) {
-					auto* device = dynamic_cast<T*>(item.second);
+				if (typeid(*item.second) == typeid(T)) {
+					auto* device = reinterpret_cast<T*>(item.second);
 					if (device->Equals(reinterpret_cast<void*>(data))) {
 						delete controllers[item.first];
-						_onDisconnected(item.first);
+						_OnDisconnected(item.first);
 						break;
 					}
 				}
@@ -104,8 +106,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		static inline std::function<void(
 			uint8_t id,
 			Types::ControllerType type
-			)> _onConnected;
-		static inline std::function<void(uint8_t id)> _onDisconnected;
+			)> _OnConnected;
+		static inline std::function<void(uint8_t id)> _OnDisconnected;
 		InputReport _lastReport;
 		InputReport _report;
 		Types::ControllerType _type;

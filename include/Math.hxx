@@ -53,7 +53,6 @@ namespace BrokenBytes::ControllerKit::Math {
 		return static_cast<float>(f);
 	}
 
-
 	/// <summary>
 	/// Gets the CRC-32 checksum for a range of bytes
 	/// </summary>

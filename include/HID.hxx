@@ -10,8 +10,8 @@ namespace BrokenBytes::ControllerKit::HID {
 #endif
 	typedef uint8_t byte;
 	
-	auto OpenDevice(char* path, HIDDevice devicePtr) -> void;
-	auto CloseDevice(HIDDevice devicePtr) -> void;
+	auto OpenDevice(char* path, HIDDevice& devicePtr) -> void;
+	auto CloseDevice(HIDDevice& devicePtr) -> void;
 	auto WriteToDevice(HIDDevice device, byte* data, size_t length) -> size_t;
 	auto ReadFromDevice(HIDDevice device, byte* data, size_t length) -> size_t;
 	auto SetOutputReport(HIDDevice device, byte* data, size_t length) -> size_t;	

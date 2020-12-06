@@ -4,6 +4,7 @@
 
 #include "DualShock4.hxx"
 #include "ControllerKit.hxx"
+#include "Mapper.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
 using namespace BrokenBytes::ControllerKit::Types;
@@ -42,47 +43,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		memset(buf, 0, sizeof(buf));
 		buf[0] = 0x02;
 		buf[1] = 0x01;
-
-		_leftStick = Vector2<float>{
-			ConvertToSignedFloat(buf[1]),
-			ConvertToSignedFloat(buf[2])
-		};
-
-		_rightStick = Vector2<float>{
-			ConvertToSignedFloat(buf[3]),
-			ConvertToSignedFloat(buf[4])
-		};
-
-		InputReport report;
-
-		auto buttons = std::map<Button, bool>();
-		std::bitset<8> buff5(buf[5]);
-		buttons.emplace(Button::Square, buff5[4] );
-		buttons.emplace(Button::Cross, buff5[5]);
-		buttons.emplace(Button::Circle, buff5[6]);
-		buttons.emplace(Button::Triangle, buff5[7]);
-
-		std::bitset<8> buff6(buf[6]);
-		buttons.emplace(Button::L1, buff6[0]);
-		buttons.emplace(Button::R1, buff6[1]);
-		buttons.emplace(Button::R2, buff6[2]);
-		buttons.emplace(Button::L2, buff6[3]);
-		buttons.emplace(Button::Share, buff6[4]);
-		buttons.emplace(Button::Options, buff6[5]);
-		buttons.emplace(Button::L3, buff6[6]);
-		buttons.emplace(Button::R3, buff6[7]);
-
-		std::bitset<8> buff7(buf[6]);
-		buttons.emplace(Button::PS, buff6[0]);
-		buttons.emplace(Button::TouchPad, buff6[1]);
-
-		_dPad = _dPadDirections[buf[5] & 0b00001111];
-
-		report.Buttons = buttons;
-		report.LeftTrigger = static_cast<float>(buf[8] / 255.0f);
-		report.RightTrigger = buf[9] / 255.0f;
-		
-		SetInputReport(report);
+		SetInputReport(Mapping::InputReportFromDualShock4(buf));
 	}
 
 	Math::Vector3<float> DualShock4::ReadGyroscope() {
@@ -131,6 +92,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		report[30] = crc[2];
 		report[31] = crc[3];
 
-		SendReport(report, sizeof(report));
+		size_t read = DUALSHOCK4_WRITE_REPORT_SIZE;
+		SendReport(report, read);
+		delete report;
 	}
 }

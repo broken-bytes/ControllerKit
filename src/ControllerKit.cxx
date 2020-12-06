@@ -1,4 +1,5 @@
 #include <array>
+#include <utility>
 
 #include "ControllerKit.hxx"
 
@@ -13,11 +14,6 @@ using namespace BrokenBytes::ControllerKit;
 using namespace BrokenBytes::ControllerKit::Types;
 
 namespace BrokenBytes::ControllerKit {
-	int index = 0;
-	auto controllers = std::array<Internal::Controller*, 16>();
-
-	bool isInit = false;
-
 	void Init() {
 		Interface::Init();
 	}
@@ -32,14 +28,10 @@ namespace BrokenBytes::ControllerKit {
 	}
 
 	auto OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> controller) -> void {
-		Interface::OnControllerConnected([controller](uint8_t id, Internal::Controller* c)->void {
-			controller(id, c->Type());
-			});
+		Interface::OnControllerConnected(std::move(controller));
 	}
 	auto OnControllerDisconnected(std::function<void(uint8_t id)> controller) -> void {
-		Interface::OnControllerDisconnected([controller](uint8_t id) {
-			controller(id);
-		});
+		Interface::OnControllerDisconnected(std::move(controller));
 	}
 }
 

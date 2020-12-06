@@ -5,7 +5,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	HIDController::HIDController(char* path, Types::ControllerType type)
 	: Controller(type) {
 		this->_path = path;
-		HID::OpenDevice(path, _report);
+		HID::OpenDevice(path, _device);
 	}
 
 	HIDController::~HIDController() {
@@ -25,15 +25,12 @@ namespace BrokenBytes::ControllerKit::Internal {
 		return this->Path() == data;
 	}
 
-	auto HIDController::SendReport(HID::byte* data, size_t length) const -> void {
-		HID::WriteToDevice(_device, _report, sizeof(_report));
+	auto HIDController::SendReport(HID::byte* data, size_t& length) const -> void {
+		length = HID::WriteToDevice(_device, _report, sizeof(_report));
 	}
 
 	auto HIDController::ReadReport(HID::byte* data, size_t& length) const -> void {
-		if(HID::ReadFromDevice(_device, data, length <= 0)) {
-			// The device is not connected anymore, delete it
-			delete this;
-		}
+		length = HID::ReadFromDevice(_device, data, length);
 	}
 
 	auto HIDController::Device() const -> HID::HIDDevice {

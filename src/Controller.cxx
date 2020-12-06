@@ -1,4 +1,7 @@
-﻿#include "Controller.hxx"
+﻿#include <utility>
+
+
+#include "Controller.hxx"
 #include "Types.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
@@ -12,13 +15,19 @@ namespace BrokenBytes::ControllerKit::Internal {
 		for (int x = 0; x < controllers.size(); x++) {
 			if(controllers[x] == nullptr) {
 				controllers.emplace(x, this);
-				_onConnected(x, type);
+				if (_OnConnected == nullptr) {
+					return;
+				}
+				_OnConnected(x, type);
 			}
 		}
 	}
 
 	Controller::~Controller() {
-		_onDisconnected(this->_number);
+		if (_OnDisconnected == nullptr) {
+			return;
+		}
+		_OnDisconnected(this->_number);
 	}
 
 	auto Controller::Controllers() -> std::map<uint8_t, Controller*> {
@@ -29,18 +38,22 @@ namespace BrokenBytes::ControllerKit::Internal {
 		for(int x = 0; x < controllers.size(); x++) {
 			if(controllers[x] == nullptr) {
 				controllers[x] = controller;
+				_OnConnected(x, controller->Type());
 				return;
 			}
 		}
 		controllers.emplace(controllers.size(), controller);
-		_onConnected(controllers.size() - 1, controller->Type());
+		if(_OnConnected == nullptr) {
+			return;
+		}
+		_OnConnected(controllers.size() - 1, controller->Type());
 	}
 
 	auto Controller::OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> callback) -> void {
-		_onConnected = callback;
+		_OnConnected = std::move(callback);
 	}
 	auto Controller::OnControllerDisconnected(std::function<void(uint8_t id)> callback) -> void {
-		_onDisconnected = callback;
+		_OnDisconnected = std::move(callback);
 	}
 
 	Vector2<float> Controller::GetStick(uint8_t id) const {

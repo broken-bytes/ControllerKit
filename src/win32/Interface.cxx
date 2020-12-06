@@ -1,7 +1,4 @@
 #include <vector>
-#include <winrt/base.h>
-
-#include "GamingInputController.hxx"
 
 /// Defines Windows 10 Target
 #define _W10
@@ -15,8 +12,11 @@
 #include <iostream>
 #include <roapi.h>
 #include <wrl.h>
+#include <winrt/base.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Gaming.Input.h>
+#include "Gaming.Input.hxx"
+#include "GamingInputController.hxx"
 
 using namespace winrt::Windows::Foundation::Collections;
 using namespace winrt::Windows::Gaming::Input;
@@ -51,33 +51,21 @@ namespace BrokenBytes::ControllerKit::Interface {
 	std::vector<GamingInputController*> W10_CONTROLLERS;
 	concurrency::critical_section myLock{};
 
-
-	auto GetGamepads() -> void {
-	}
-	
 	auto OnGamepadAdded(const winrt::Windows::Foundation::IInspectable& sender, const Gamepad& gamepad) -> void {
-		auto* ptr = reinterpret_cast<const uint64_t*>(&gamepad);
 		Controller::Create<GamingInputController>();
 	}
 
 	auto OnGamepadRemoved(const winrt::Windows::Foundation::IInspectable& sender, const Gamepad& gamepad) -> void {
 		Controller::Remove<GamingInputController, Gamepad*>(&const_cast<Gamepad&>(gamepad));
 	}
-	
+
 	void Init() {
 		USB::Init();
-
-		WATCHDOG = std::thread([] {
-
-			Gamepad::GamepadAdded(&OnGamepadAdded);
-			Gamepad::GamepadRemoved(&OnGamepadRemoved);
-
-			GetGamepads();
-
-			while (true) {
-				
-			}
-			});
+		GamingInput::Init();
+		Gamepad::GamepadAdded(&OnGamepadAdded);
+		Gamepad::GamepadRemoved(&OnGamepadRemoved);
+		QueryDevices();
+		
 	}
 #endif
 
@@ -107,12 +95,14 @@ namespace BrokenBytes::ControllerKit::Interface {
 		}
 	}
 
-	auto OnControllerConnected(std::function<void(uint8_t id, Controller*)> controller) -> void {
-		ON_CONTROLLER_CONNECTED_EVENT = controller;
+	auto OnControllerConnected(
+		std::function<void(uint8_t id, Types::ControllerType type)> controller
+	) -> void {
+		Controller::OnControllerConnected(controller);
 	}
 
 	auto OnControllerDisconnected(std::function<void(uint8_t id)> controller) -> void {
-		ON_CONTROLLER_DISCONNECTED_EVENT = controller;
+		Controller::OnControllerDisconnected(controller);
 	}
 
 	auto GetControllers() -> std::map<uint8_t, Controller*> {

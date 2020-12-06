@@ -14,11 +14,12 @@ set(src_include
 	include/HID.hxx
 	include/Math.hxx
 	include/Types.hxx
-    	include/Controller.hxx
+  include/Controller.hxx
 	include/HIDController.hxx
 	include/DualShock4.hxx
 	include/DualSense.hxx
-	
+	include/Mapper.hxx
+
 )
 
 set(src_interfaces
@@ -46,9 +47,9 @@ set(src
 	src/HIDController.cxx
 )
 
-set(src_win 
+set(src_win
 	src/win32/Interface.cxx
-	src/win32/USB.cxx	
+	src/win32/USB.cxx
 	src/win32/HID.cxx
 	src/win32/XInput.cxx
 	src/win32/Gaming.Input.cxx
@@ -67,4 +68,3 @@ target_link_libraries(Test PUBLIC ControllerKit)
 target_link_directories(ControllerKit PUBLIC lib/)
 target_include_directories(ControllerKit PUBLIC include/)
 target_include_directories(ControllerKit PRIVATE external/)
-

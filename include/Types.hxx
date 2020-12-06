@@ -97,16 +97,24 @@ namespace BrokenBytes::ControllerKit::Types {
 		uint8_t Player;
 		ControllerType Type;
 
-		auto HasFeature(uint8_t controller, Types::Feature feature) -> bool {
+		
+		[[nodiscard]] auto HasFeature(
+			uint8_t controller,
+			Types::Feature feature
+		) const -> bool {
 			// TODO: Feature detection
 			return true;
 		}
 
-		auto GetButtonState(Types::Button button) -> ButtonState {
+		[[nodiscard]] auto GetButtonState(
+			Types::Button button
+		) const -> ButtonState {
 			return Interface::GetControllers()[Player]->GetButtonState(button);
 		}
 
-		auto GetAxis(Types::Axis axis) -> float {
+		[[nodiscard]] auto GetAxis(
+			Types::Axis axis
+		) const -> float {
 			switch (axis) {
 			case Types::Axis::LeftX:
 				return Interface::GetControllers()[Player]->GetStick(0).X;

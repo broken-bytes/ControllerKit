@@ -16,7 +16,10 @@ namespace BrokenBytes::ControllerKit::Internal {
 
 		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
 	private:
-		static inline Foundation::IVectorView<Gaming::Gamepad> _gamepads;
-		Gaming::Gamepad* _addr;
+		std::thread _worker;
+		std::vector<Gaming::Gamepad> _gamepads;
+		const Gaming::Gamepad* _gamepad = nullptr;
+
+		auto Routine() -> void;
 	};
 }

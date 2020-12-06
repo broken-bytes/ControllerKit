@@ -1,7 +1,7 @@
 #include "HID.hxx"
 
 namespace BrokenBytes::ControllerKit::HID {
-	auto OpenDevice(char* path, HIDDevice devicePtr) -> void {
+	auto OpenDevice(char* path, HIDDevice& devicePtr) -> void {
 		devicePtr = CreateFile(
 			path,
 			GENERIC_READ | GENERIC_WRITE,
@@ -13,7 +13,7 @@ namespace BrokenBytes::ControllerKit::HID {
 		);
 	}
 
-	auto CloseDevice(HIDDevice devicePtr) -> void {
+	auto CloseDevice(HIDDevice& devicePtr) -> void {
 		CloseHandle(devicePtr);
 	}
 
@@ -27,7 +27,7 @@ namespace BrokenBytes::ControllerKit::HID {
 
 	auto ReadFromDevice(HIDDevice device, byte* data, size_t length) -> size_t {
 		DWORD read = 0;
-		if(!ReadFile(device, data, 255, &read, nullptr)) {
+		if(!ReadFile(device, data, length, &read, nullptr)) {
 			return 0;
 		}
 		return read;
