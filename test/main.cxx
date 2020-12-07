@@ -120,14 +120,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 
 	t = std::thread([]() {
 		while (true) {
-			for (auto& item : ControllerKit::Controllers()) {
+			for (auto item : ControllerKit::Controllers()) {
 				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftTrigger);
 				std::cout << input * 100 << " " << static_cast<int>(item.Type()) << std::endl;
-				auto ac = reinterpret_cast<ControllerKit::AdaptiveTriggerController*>(&item);
 
+				item.SetLightbarColor(ControllerKit::Types::Color{ 255, 55, 0 });
 
+				
 				if (input > 0.2f) {
-					ac->SetTriggerAdvanced(
+					item.SetTriggerAdvanced(
 						ControllerKit::Types::Trigger::Left,
 						1.0f,
 						0.0f,
@@ -138,25 +139,30 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 					);
 				}
 				else {
-					ac->SetTriggerDisabled(ControllerKit::Types::Trigger::Left);
+					item.SetTriggerDisabled(ControllerKit::Types::Trigger::Left);
 				}
 
 				input = item.GetAxis(ControllerKit::Types::Axis::RightTrigger);
 
-				if (input > 0.7f) {
-					ac->SetTriggerAdvanced(
+				if (input > 0.8f) {
+					item.SetTriggerAdvanced(
 						ControllerKit::Types::Trigger::Right,
 						0.2f,
 						0.0f,
-						0.6f,
+						0.0f,
 						1.0f,
 						0.05f,
 						false
 					);
 				} else {
-					ac->SetTriggerDisabled(ControllerKit::Types::Trigger::Right);
+					item.SetTriggerContinuous(
+						ControllerKit::Types::Trigger::Right,
+						0.5f,
+						1.0f
+					);
 				}
 			}
+
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 			system("cls");
 		}

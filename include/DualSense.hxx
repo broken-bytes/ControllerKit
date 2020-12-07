@@ -12,13 +12,13 @@ namespace BrokenBytes::ControllerKit::Internal {
 	constexpr uint8_t DUALSENSE_READ_REPORT_SIZE = 64;
 	constexpr uint8_t DUALSENSE_WRITE_REPORT_SIZE = 48;
 	
-	class DualSense : public
-		HIDController,
-		IRumbleController,
-		IGyroscopeController,
-		ILightbarController,
-		IAdaptiveTriggerController,
-		ITouchpadController
+	class DualSense :
+	public HIDController,
+	public IRumbleController,
+	public IGyroscopeController,
+	public ILightbarController,
+	public IAdaptiveTriggerController,
+	public ITouchpadController
 	{
 	public:
 		DualSense(DevicePath path);
@@ -40,6 +40,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		) -> void override;
 	private:
 		enum class Permission1 {
+			None = 0x00,
 			Rumble = 0x03,
 			RightTrigger = 0x04,
 			LeftTrigger = 0x08,
@@ -50,6 +51,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		};
 
 		enum class Permission2 {
+			None = 0x00,
 			MicLED = 0x01,
 			ToggleMute = 0x02,
 			Lightbar = 0x04,
@@ -70,6 +72,5 @@ namespace BrokenBytes::ControllerKit::Internal {
 		
 		auto SetPermission(Permission1 perm1, Permission2 perm2) const -> void;
 		auto Routine() -> void;
-		auto ParseRawInput(unsigned char* input) -> void;
 	};
 }

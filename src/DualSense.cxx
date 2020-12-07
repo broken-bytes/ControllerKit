@@ -28,6 +28,10 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto DualSense::SetLightbarColor(Color c) -> void {
+		_report[45] = c.R;
+		_report[46] = c.G;
+		_report[47] = c.B;
+		SetPermission(Permission1::None, Permission2::Lightbar);
 		SetDirty();
 	}
 
@@ -91,22 +95,19 @@ namespace BrokenBytes::ControllerKit::Internal {
 	auto DualSense::Routine() -> void {
 		auto* buffer = new unsigned char[DUALSENSE_READ_REPORT_SIZE];
 		_report = new unsigned char[DUALSENSE_WRITE_REPORT_SIZE];
-		this->SetClear();
-		while (true) {
+		SetClear();
+		
+		while (Device() != nullptr) {
 			memset(buffer, 0, DUALSENSE_READ_REPORT_SIZE);
 			size_t bytesRead = DUALSENSE_READ_REPORT_SIZE;
 			ReadReport(buffer, bytesRead);
-			ParseRawInput(buffer);
+			SetInputReport(Mapping::InputReportFromDualSense(buffer));
 			if (IsDirty()) {
-				size_t read = DUALSENSE_WRITE_REPORT_SIZE;
-				SendReport(_report, read);
+				size_t write = DUALSENSE_WRITE_REPORT_SIZE;
+				SendReport(_report, write);
 				SetClear();
 			}
 		}
 		delete buffer;
-	}
-
-	auto DualSense::ParseRawInput(unsigned char* input) -> void {
-		SetInputReport(Mapping::InputReportFromDualSense(input));
 	}
 }

@@ -17,7 +17,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		IGyroscopeController(),
 		ILightbarController(),
 		ITouchpadController() {
-		//_thread = std::thread(&DualShock4::Routine, this);
+		_thread = std::thread([this]() {this->Routine(); });
 	}
 
 	DualShock4::~DualShock4() {
@@ -25,17 +25,17 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto DualShock4::Routine() -> void {
-		unsigned char buf[256];
-		buf[0] = 0x02;
-		buf[1] = 0x01;
+		auto* buffer = new unsigned char[DUALSENSE_READ_REPORT_SIZE];
+		_report = new unsigned char[DUALSENSE_WRITE_REPORT_SIZE];
+		SetClear();
 		
 		while (Device() != nullptr) {
-			memset(buf, 0, sizeof(buf));
+			memset(buffer, 0, DUALSHOCK4_READ_REPORT_SIZE);
 			size_t bytesRead = DUALSHOCK4_READ_REPORT_SIZE;
-			ReadReport(buf, bytesRead);
-			SetInputReport(Mapping::InputReportFromDualShock4(buf));
+			ReadReport(buffer, bytesRead);
+			SetInputReport(Mapping::InputReportFromDualShock4(buffer));
 			if(IsDirty()) {
-				size_t written = 0;
+				size_t write = DUALSHOCK4_WRITE_REPORT_SIZE;
 				auto crc = GetCRCFromBytes(
 					_report,
 					DUALSHOCK4_WRITE_REPORT_SIZE - 4
@@ -44,30 +44,25 @@ namespace BrokenBytes::ControllerKit::Internal {
 				_report[29] = crc[1];
 				_report[30] = crc[2];
 				_report[31] = crc[3];
-				SendReport(_report, written);
+				SendReport(_report, write);
 			}
-			std::this_thread::sleep_for(
-				std::chrono::milliseconds(_pollRateMs)
-			);
 		}
+		delete buffer;
 	}
 
 	auto DualShock4::SetDirty() -> void {
-		_report[0] = 0x05;
-		_report[1] = 0xF7;
-		//Controls
-		_report[2] = 0x04;
-
-		// Volume
-		_report[19] = 0xFF;
-		_report[20] = 0xFF;
-		_report[21] = 0xFF;
-
 		HIDController::SetDirty();
 	}
 
 	auto DualShock4::SetClear() -> void {
 		memset(_report, 0, DUALSHOCK4_WRITE_REPORT_SIZE);
+		_report[0] = 0x05;
+		_report[1] = 0x07;
+		_report[2] = 0x04;
+		// Volume
+		_report[19] = 0xFF;
+		_report[20] = 0xFF;
+		_report[21] = 0xFF;
 		HIDController::SetClear();
 	}
 
