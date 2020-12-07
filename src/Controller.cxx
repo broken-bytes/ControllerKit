@@ -57,6 +57,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	Vector2<float> Controller::GetStick(uint8_t id) const {
+		std::scoped_lock<std::mutex> lock(_reportMtx);
 		if (id == 0) {
 			return _report.LeftStick;
 		}
@@ -64,6 +65,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::GetTrigger(Trigger t) const -> float {
+		std::scoped_lock<std::mutex> lock(_reportMtx);
 		if (t == Trigger::Left) {
 			return _report.LeftTrigger;
 		}
@@ -71,13 +73,15 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::GetDPadDirection() const -> DPadDirection {
+		std::scoped_lock<std::mutex> lock(_reportMtx);
 		return _report.DPad;
 	}
 
 	auto Controller::GetButtonState(Button button) const -> ButtonState {
+		std::scoped_lock<std::mutex> lock(_reportMtx);
 		uint8_t state = 0;
 		state += _report.Buttons.at(button);
-		state += _report.Buttons.at(button) * 2;
+		state += _lastReport.Buttons.at(button) * 2;
 
 		switch (state) {
 		case 0: return ButtonState::Released;
@@ -93,6 +97,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::SetInputReport(InputReport report) -> void {
+		std::scoped_lock<std::mutex> lock(_reportMtx);
 		_lastReport = report;
 		_report = report;
 	}
