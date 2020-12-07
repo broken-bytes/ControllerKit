@@ -9,8 +9,8 @@
 #include "interfaces/ITouchpadController.hxx"
 
 namespace BrokenBytes::ControllerKit::Internal {
-	constexpr uint8_t DUALSENSE_READ_REPORT_SIZE = 48;
-	constexpr uint8_t DUALSENSE_WRITE_REPORT_SIZE = 32;
+	constexpr uint8_t DUALSENSE_READ_REPORT_SIZE = 64;
+	constexpr uint8_t DUALSENSE_WRITE_REPORT_SIZE = 48;
 	
 	class DualSense : public
 		HIDController,
@@ -21,21 +21,18 @@ namespace BrokenBytes::ControllerKit::Internal {
 		ITouchpadController
 	{
 	public:
-		DualSense(char* path);
-		~DualSense();
+		DualSense(DevicePath path);
+		virtual ~DualSense();
 		DualSense(const DualSense&) = delete;
 		DualSense(const DualSense&&) = delete;
 		DualSense& operator=(const DualSense&) = delete;
 		DualSense& operator=(DualSense&&) = delete;
-		bool operator==(char* path) const override;
-		bool operator==(const char* path) const override;
 
-		
 		auto ReadGyroscope() -> Math::Vector3<float> override;
 		auto ReadAcceleration() -> Math::Vector3<float> override;
 		auto SetLightbarColor(Types::Color c) -> void override;
-		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
-		auto GetTouches()->std::vector<Math::Vector2<uint8_t>> override;
+		auto SetRumble(Types::Rumble motor, uint8_t strength) -> void override;
+		auto GetTouches()->std::vector<Math::Vector2<float>> override;
 		auto SetTrigger(
 			Types::Trigger trigger,
 			Types::AdaptiveTriggerMode mode,
@@ -64,18 +61,15 @@ namespace BrokenBytes::ControllerKit::Internal {
 		};
 		
 		std::thread _thread;
-		bool _isDirty;
 		uint8_t _reportPermissionFlags;
 		unsigned char* _report;
-		std::map<Types::Trigger, TriggerConfig> _triggers = {};
 		Types::Color* _color;
 
+		auto SetDirty() -> void override;
+		auto SetClear() -> void override;
 		
-		auto SetDirty() -> void;
-		auto SetClear() -> void;
 		auto SetPermission(Permission1 perm1, Permission2 perm2) const -> void;
 		auto Routine() -> void;
-
 		auto ParseRawInput(unsigned char* input) -> void;
 	};
 }

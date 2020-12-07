@@ -73,7 +73,7 @@ namespace BrokenBytes::ControllerKit::Interface {
 		auto devices = USB::EnumerateDevices();
 
 		for (auto item : devices) {
-			if (std::string(item.Path).find("IG_") != std::string::npos) {
+			if (std::wstring(item.Path).find(L"IG_") != std::string::npos) {
 				// Skip XInput Controllers as we are using Windows.Gaming.Input or XInput and not A custom HID for them
 				continue;
 			}
@@ -83,12 +83,12 @@ namespace BrokenBytes::ControllerKit::Interface {
 			if (item.VendorId == SONY) {
 				// DualShock 4
 				if (item.ProductId == DS4_1 || item.ProductId == DS4_2) {
-					Controller::Create<DualShock4, char*>(item.Path);
+					Controller::Create<DualShock4, DevicePath>(item.Path);
 					continue;
 				}
 				// DualSense
 				if (item.ProductId == DS_1) {
-					Controller::Create<DualSense, char*>(item.Path);
+					Controller::Create<DualSense, DevicePath>(item.Path);
 					continue;
 				}
 			}

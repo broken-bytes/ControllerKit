@@ -12,6 +12,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 		/// Gets all current touches on the touchpad
 		/// </summary>
 		/// <returns>The touches represented in 2D coordinates</returns>
-		virtual auto GetTouches() -> std::vector<Math::Vector2<uint8_t>> = 0;
+		virtual auto GetTouches() -> std::vector<Math::Vector2<float>> = 0;
 	};
 }

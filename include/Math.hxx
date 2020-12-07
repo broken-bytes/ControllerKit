@@ -54,6 +54,25 @@ namespace BrokenBytes::ControllerKit::Math {
 	}
 
 	/// <summary>
+	/// Converts a value from float range to ushort range from 0 - 255
+	/// </summary>
+	/// <param name="value"></param>
+	/// <returns>The float value</returns>
+	inline auto ConvertToUnsignedShort(float value) -> uint8_t {
+		auto val = value;
+		if(val > 1) {
+			val = 1;
+		}
+		if(val < 0) {
+			val = 0;
+		}
+		val *= 255;
+		auto ui = static_cast<uint8_t>(val);
+		return ui;
+	}
+	
+
+	/// <summary>
 	/// Gets the CRC-32 checksum for a range of bytes
 	/// </summary>
 	/// <param name="bytes"></param>

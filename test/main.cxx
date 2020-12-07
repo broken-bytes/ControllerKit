@@ -120,9 +120,15 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 
 	t = std::thread([]() {
 		while (true) {
-			for (const auto& item : ControllerKit::Controllers()) {
+			for (auto& item : ControllerKit::Controllers()) {
 				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftX);
-				std::cout << input * 100 << " " << static_cast<int>(item.Type) << std::endl;
+				std::cout << input * 100 << " " << static_cast<int>(item.Type()) << std::endl;
+				auto ac = reinterpret_cast<ControllerKit::AdaptiveTriggerController*>(&item);
+				ac->SetTriggerContinuous(
+					ControllerKit::Types::Trigger::Left,
+					0.5f,
+					1
+				);
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 			system("cls");

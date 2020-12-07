@@ -11,20 +11,24 @@
 
 
 using namespace BrokenBytes::ControllerKit;
-using namespace BrokenBytes::ControllerKit::Types;
+using namespace Types;
 
 namespace BrokenBytes::ControllerKit {
 	void Init() {
 		Interface::Init();
 	}
 
-	auto Controllers() -> std::vector<Types::Controller> {
-		std::vector<Types::Controller> list;
+	auto Controllers() -> std::vector<Controller> {
+		std::vector<Controller> list;
 		auto controllers = Interface::GetControllers();
 		for(auto item: controllers) {
-			list.emplace_back(Types::Controller{ item.first, item.second->Type() });
+			list.emplace_back(Controller{ item.first, item.second->Type() });
 		}
 		return list;
+	}
+
+	auto GetControllerType(int controller) -> Types::ControllerType {
+		return Interface::GetControllers()[controller]->Type();
 	}
 
 	auto OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> controller) -> void {

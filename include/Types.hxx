@@ -44,7 +44,9 @@ namespace BrokenBytes::ControllerKit::Types {
 
 	enum class Rumble {
 		Left,
-		Right
+		Right,
+		TriggerLeft,
+		TriggerRight
 	};
 
 	enum class ControllerType {
@@ -90,46 +92,5 @@ namespace BrokenBytes::ControllerKit::Types {
 		Sectional = 0x02,
 		ContinuousAdvanced = 0x25,
 		SectionalAdvanced = 0x26
-	};
-
-
-	struct Controller {
-		uint8_t Player;
-		ControllerType Type;
-
-		
-		[[nodiscard]] auto HasFeature(
-			uint8_t controller,
-			Types::Feature feature
-		) const -> bool {
-			// TODO: Feature detection
-			return true;
-		}
-
-		[[nodiscard]] auto GetButtonState(
-			Types::Button button
-		) const -> ButtonState {
-			return Interface::GetControllers()[Player]->GetButtonState(button);
-		}
-
-		[[nodiscard]] auto GetAxis(
-			Types::Axis axis
-		) const -> float {
-			switch (axis) {
-			case Types::Axis::LeftX:
-				return Interface::GetControllers()[Player]->GetStick(0).X;
-			case Types::Axis::LeftY:
-				return Interface::GetControllers()[Player]->GetStick(0).Y;
-			case Types::Axis::RightX:
-				return Interface::GetControllers()[Player]->GetStick(1).X;
-			case Types::Axis::RightY:
-				return Interface::GetControllers()[Player]->GetStick(1).Y;
-			case Types::Axis::LeftTrigger:
-				return Interface::GetControllers()[Player]->GetTrigger(Types::Trigger::Left);
-			case Types::Axis::RightTrigger:
-				return Interface::GetControllers()[Player]->GetTrigger(Types::Trigger::Right);
-			}
-			return 0;
-		}
 	};
 }

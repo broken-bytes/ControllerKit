@@ -14,7 +14,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		GamingInputController();
 		auto Equals(void* data) -> bool override;
 
-		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
+		auto SetRumble(Types::Rumble motor, uint8_t strength) -> void override;
 	private:
 		std::thread _worker;
 		std::vector<Gaming::Gamepad> _gamepads;

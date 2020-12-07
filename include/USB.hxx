@@ -4,6 +4,7 @@
 
 #ifdef _WIN32
 typedef void* USBDeviceHandle;
+typedef wchar_t* DevicePath;
 #elif _OSX
 #else
 #endif
@@ -16,7 +17,7 @@ namespace BrokenBytes::ControllerKit::USB {
 	};
 
 	struct USBDevice {
-		char* Path;
+		DevicePath Path;
 		uint32_t VendorId;
 		uint32_t ProductId;
 

@@ -2,8 +2,11 @@
 #include <cstdint>
 
 
-namespace BrokenBytes::ControllerKit::Internal {
+namespace BrokenBytes::ControllerKit::Types {
 	enum class Rumble;
+}
+
+namespace BrokenBytes::ControllerKit::Internal {
 	class IRumbleController {
 	public:
 		virtual ~IRumbleController() = default;
@@ -13,6 +16,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 		/// </summary>
 		/// <param name="motor">The motor</param>
 		/// <param name="strength">The intensity</param>
-		virtual auto SetRumble(Rumble motor, uint8_t strength) -> void = 0;
+		virtual auto SetRumble(Types::Rumble motor, uint8_t strength) -> void = 0;
 	};
 }

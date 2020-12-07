@@ -11,5 +11,5 @@ namespace BrokenBytes::ControllerKit::Internal {
 		return &device == &_gamepad;
 	}
 
-	auto XInputController::SetRumble(Rumble motor, uint8_t strength) -> void {}
+	auto XInputController::SetRumble(Types::Rumble motor, uint8_t strength) -> void {}
 }

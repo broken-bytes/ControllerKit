@@ -12,7 +12,7 @@
 
 
 namespace BrokenBytes::ControllerKit::Internal {
-	constexpr uint8_t DUALSHOCK4_READ_REPORT_SIZE = 48;
+	constexpr uint8_t DUALSHOCK4_READ_REPORT_SIZE = 64;
 	constexpr uint8_t DUALSHOCK4_WRITE_REPORT_SIZE = 32;
 	class DualShock4 :
 		public HIDController,
@@ -22,12 +22,16 @@ namespace BrokenBytes::ControllerKit::Internal {
 		public ITouchpadController
 	{
 	public:
-		DualShock4(char* path);
+		DualShock4(DevicePath path);
 		DualShock4(const DualShock4&) = delete;
 		DualShock4(const DualShock4&&) = delete;
-		DualShock4& operator=(const DualShock4&) = delete;
-		DualShock4& operator=(DualShock4&&) = delete;
 		~DualShock4();
+
+		auto ReadGyroscope()->Math::Vector3<float> override;
+		auto ReadAcceleration()->Math::Vector3<float> override;
+		auto SetLightbarColor(Types::Color c) -> void override;
+		auto SetRumble(Types::Rumble motor, uint8_t strength) -> void override;
+		auto GetTouches()->std::vector<Math::Vector2<float>> override;
 		
 	private:
 		struct ButtonState {
@@ -46,6 +50,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			Types::DPadDirection::None
 		};
 
+		unsigned char* _report;
 		const uint8_t _pollRateMs = 3;
 		unsigned char _readIndex = 0x01;
 		int _readSize = 128;
@@ -67,15 +72,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		
 		std::thread _thread;
 
-		void Routine();
-
-		void WriteReports();
-		void ReadReports();
-	public:
-		auto ReadGyroscope() -> Math::Vector3<float> override;
-		auto ReadAcceleration() -> Math::Vector3<float> override;
-		auto SetLightbarColor(Types::Color c) -> void override;
-		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
-		auto GetTouches() -> std::vector<Math::Vector2<uint8_t>> override;
+		auto Routine() -> void;
+		auto SetDirty() -> void override;
+		auto SetClear() -> void override;
 	};
 }

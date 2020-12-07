@@ -21,7 +21,7 @@ namespace BrokenBytes::ControllerKit::USB {
 		GetRawInputDeviceList(rawList, &numDevices, sizeof(RAWINPUTDEVICELIST));
 
 		UINT bufferSize = 0;
-		char* device = nullptr;
+		DevicePath device = nullptr;
 		for (int x = 0; x < numDevices; x++) {
 			auto type = rawList[x].dwType;
 			auto handle = rawList[x].hDevice;
@@ -31,9 +31,9 @@ namespace BrokenBytes::ControllerKit::USB {
 				nullptr,
 				&bufferSize
 			);
-			device = new char[bufferSize];
+			device = new wchar_t[bufferSize];
 			memset(device, 0, bufferSize);
-			GetRawInputDeviceInfo(
+			GetRawInputDeviceInfoW(
 				rawList[x].hDevice,
 				RIDI_DEVICENAME,
 				device,

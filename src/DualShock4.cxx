@@ -5,12 +5,13 @@
 #include "DualShock4.hxx"
 #include "ControllerKit.hxx"
 #include "Mapper.hxx"
+#include "Types.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
 using namespace BrokenBytes::ControllerKit::Types;
 
 namespace BrokenBytes::ControllerKit::Internal {
-	DualShock4::DualShock4(char* path) :
+	DualShock4::DualShock4(DevicePath path) :
 		HIDController(path, ControllerType::DualShock4),
 		IRumbleController(),
 		IGyroscopeController(),
@@ -23,77 +24,77 @@ namespace BrokenBytes::ControllerKit::Internal {
 		HIDController::~HIDController();
 	}
 
-	void DualShock4::Routine() {
+	auto DualShock4::Routine() -> void {
 		unsigned char buf[256];
-		memset(buf, 0, sizeof(buf));
-		buf[0] = 0x01;
-
-		memset(buf, 0, 256);
+		buf[0] = 0x02;
+		buf[1] = 0x01;
+		
 		while (Device() != nullptr) {
-			ReadReports();
-			WriteReports();
+			memset(buf, 0, sizeof(buf));
+			size_t bytesRead = DUALSHOCK4_READ_REPORT_SIZE;
+			ReadReport(buf, bytesRead);
+			SetInputReport(Mapping::InputReportFromDualShock4(buf));
+			if(IsDirty()) {
+				size_t written = 0;
+				auto crc = GetCRCFromBytes(
+					_report,
+					DUALSHOCK4_WRITE_REPORT_SIZE - 4
+				);
+				_report[28] = crc[0];
+				_report[29] = crc[1];
+				_report[30] = crc[2];
+				_report[31] = crc[3];
+				SendReport(_report, written);
+			}
 			std::this_thread::sleep_for(
 				std::chrono::milliseconds(_pollRateMs)
 			);
 		}
 	}
 
-	void DualShock4::ReadReports() {
-		unsigned char buf[256];
-		memset(buf, 0, sizeof(buf));
-		buf[0] = 0x02;
-		buf[1] = 0x01;
-		SetInputReport(Mapping::InputReportFromDualShock4(buf));
-	}
-
-	Math::Vector3<float> DualShock4::ReadGyroscope() {
-		return { 0,0, 0 };
-	}
-	Math::Vector3<float> DualShock4::ReadAcceleration() {
-		return { 0,0,0 };
-	}
-	void DualShock4::SetLightbarColor(Color c) {}
-	void DualShock4::SetRumble(Rumble motor, uint8_t strength) {}
-	std::vector<Math::Vector2<uint8_t>> DualShock4::GetTouches() {
-		return { { 0,0 } };
-	}
-
-	void DualShock4::WriteReports() {
-		unsigned char report[32];
-		memset(report, 0, 32);
-		// Config
-		report[0] = 0x05;
-		report[1] = 0xF7;
-
-		// Controls
-		report[2] = 0x04;
-		// Rumble
-		report[4] = _rumble[0];
-		report[5] = _rumble[1];
-
-		// LED
-
-		report[6] = _ledColor.R;
-		report[7] = _ledColor.G;
-		report[8] = _ledColor.B;
-
-		// Flash
-		report[9] = _flashing[0];
-		report[10] = _flashing[1];
+	auto DualShock4::SetDirty() -> void {
+		_report[0] = 0x05;
+		_report[1] = 0xF7;
+		//Controls
+		_report[2] = 0x04;
 
 		// Volume
-		report[19] = 0x00;
-		report[20] = 0x00;
-		report[21] = 0x00;
+		_report[19] = 0xFF;
+		_report[20] = 0xFF;
+		_report[21] = 0xFF;
 
-		auto crc = GetCRCFromBytes(report, 28);
-		report[28] = crc[0];
-		report[29] = crc[1];
-		report[30] = crc[2];
-		report[31] = crc[3];
+		HIDController::SetDirty();
+	}
 
-		size_t read = DUALSHOCK4_WRITE_REPORT_SIZE;
-		SendReport(report, read);
-		delete report;
+	auto DualShock4::SetClear() -> void {
+		memset(_report, 0, DUALSHOCK4_WRITE_REPORT_SIZE);
+		HIDController::SetClear();
+	}
+
+	auto DualShock4::ReadGyroscope() -> Math::Vector3<float> {
+		return { 0,0, 0 };
+	}
+
+	auto DualShock4::ReadAcceleration() -> Math::Vector3<float> {
+		return { 0,0,0 };
+	}
+	void DualShock4::SetLightbarColor(Color c) {
+		_report[6] = c.R;
+		_report[7] = c.G;
+		_report[8] = c.B;
+		SetDirty();
+	}
+
+	auto DualShock4::SetRumble(Rumble motor, uint8_t strength) -> void {
+		if(motor == Rumble::Left) {
+			_report[4] = strength;
+		}
+		if(motor == Rumble::Right) {
+			_report[5] = strength;
+		}
+	}
+
+	auto DualShock4::GetTouches() -> std::vector<Math::Vector2<float>> {
+		return { { 0,0 } };
 	}
 }

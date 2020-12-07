@@ -15,6 +15,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			uint8_t ForceInRange;
 			Strength Strength;
 			bool PauseOnPressed;
+			uint8_t Frequency;
 		};
 
 		struct TriggerConfig {

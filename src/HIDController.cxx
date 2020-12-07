@@ -2,10 +2,11 @@
 
 
 namespace BrokenBytes::ControllerKit::Internal {
-	HIDController::HIDController(char* path, Types::ControllerType type)
+	HIDController::HIDController(DevicePath path, Types::ControllerType type)
 	: Controller(type) {
 		this->_path = path;
-		HID::OpenDevice(path, _device);
+		this->_device = nullptr;
+		HID::OpenDevice(path, &_device);
 	}
 
 	HIDController::~HIDController() {
@@ -13,31 +14,34 @@ namespace BrokenBytes::ControllerKit::Internal {
 		HID::CloseDevice(_device);
 	}
 
-	bool HIDController::operator==(char* path) const {
-		return _path == path;
-	}
-
-	bool HIDController::operator==(const char* path) const {
-		return _path == path;
-	}
-
 	auto HIDController::Equals(void* data) -> bool {
 		return this->Path() == data;
 	}
 
-	auto HIDController::SendReport(HID::byte* data, size_t& length) const -> void {
-		length = HID::WriteToDevice(_device, _report, sizeof(_report));
+	auto HIDController::SendReport(byte* data, size_t& length) const -> void {
+		length = HID::WriteToDevice(_device, data, length);
 	}
 
-	auto HIDController::ReadReport(HID::byte* data, size_t& length) const -> void {
+	auto HIDController::ReadReport(byte* data, size_t& length) const -> void {
 		length = HID::ReadFromDevice(_device, data, length);
 	}
 
-	auto HIDController::Device() const -> HID::HIDDevice {
+	auto HIDController::SetDirty() -> void {
+		_isDirty = true;
+	}
+	auto HIDController::SetClear() -> void {
+		_isDirty = false;
+	}
+
+	auto HIDController::Device() const -> HIDDevice {
 		return _device;
 	}
 
-	auto HIDController::Path() const -> char* {
+	auto HIDController::Path() const -> DevicePath {
 		return _path;
+	}
+
+	auto HIDController::IsDirty() const -> bool {
+		return _isDirty;
 	}
 }

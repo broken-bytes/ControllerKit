@@ -9,7 +9,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	public:
 		XInputController(XInputDevice gamepad);
 		bool operator==(XInputDevice device) const;
-		auto SetRumble(Rumble motor, uint8_t strength) -> void override;
+		auto SetRumble(Types::Rumble motor, uint8_t strength) -> void override;
 	private:
 		XInputDevice _gamepad;
 	};

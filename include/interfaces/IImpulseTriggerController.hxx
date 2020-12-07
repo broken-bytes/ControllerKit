@@ -1,13 +1,13 @@
 #pragma once
 
-namespace BrokenBytes::ControllerKit::Internal {
+namespace BrokenBytes::ControllerKit::Types {
 	enum class Rumble;
+}
 
+namespace BrokenBytes::ControllerKit::Internal {
 	class IImpulseTriggerController {
 	public:
 		virtual ~IImpulseTriggerController() = default;
-
-		virtual auto SetRumble(Rumble motor, uint8_t strength) -> void = 0;
-		
+		virtual auto SetRumble(Types::Rumble motor, uint8_t strength) -> void = 0;	
 	};
 }

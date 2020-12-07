@@ -11,21 +11,24 @@ namespace BrokenBytes::ControllerKit::Internal {
 	
 	class HIDController : public Controller {
 	public:
-		HIDController(char* path, Types::ControllerType type);
-		~HIDController();
-		virtual bool operator==(char* path) const;
-		virtual bool operator==(const char* path) const;
+		HIDController(DevicePath path, Types::ControllerType type);
+		virtual ~HIDController();
 		auto Equals(void* data) -> bool override;
 
 	protected:
-		auto SendReport(HID::byte* data, size_t& length) const -> void;
-		auto ReadReport(HID::byte* data, size_t& length) const -> void;
-		[[nodiscard]] auto Device() const -> HID::HIDDevice;
-		[[nodiscard]] auto Path() const -> char*;
+		auto SendReport(byte* data, size_t& length) const -> void;
+		auto ReadReport(byte* data, size_t& length) const -> void;
+		virtual auto SetDirty() -> void;
+		virtual auto SetClear() -> void;
+		[[nodiscard]] auto Device() const -> HIDDevice;
+		[[nodiscard]] auto Path() const -> DevicePath;
+		[[nodiscard]] auto IsDirty() const -> bool;
+		
 		
 	private:
-		HID::HIDDevice _device;
-		char* _path;
+		HIDDevice _device;
+		DevicePath _path;
+		bool _isDirty;
 		std::thread _reportSender;
 		uint8_t _reportRate = 100;
 		unsigned char* _report = {};
