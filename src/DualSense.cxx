@@ -18,7 +18,13 @@ namespace BrokenBytes::ControllerKit::Internal {
 	DualSense::~DualSense() {
 		HIDController::~HIDController();
 	}
-	
+
+	auto DualSense::SetPlayerIndicator(uint8_t player) -> void {
+		SetPermission(Permission1::None, Permission2::TogglePlayerLED);
+		_report[44] = player;
+		SetDirty();
+	}
+
 	auto DualSense::ReadGyroscope() -> Math::Vector3<float> {
 		return { 0,0,0 };
 	}

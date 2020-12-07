@@ -28,6 +28,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		DualSense& operator=(const DualSense&) = delete;
 		DualSense& operator=(DualSense&&) = delete;
 
+		auto SetPlayerIndicator(uint8_t player) -> void;
+		
 		auto ReadGyroscope() -> Math::Vector3<float> override;
 		auto ReadAcceleration() -> Math::Vector3<float> override;
 		auto SetLightbarColor(Types::Color c) -> void override;
