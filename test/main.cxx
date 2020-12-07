@@ -121,33 +121,41 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	t = std::thread([]() {
 		while (true) {
 			for (auto& item : ControllerKit::Controllers()) {
-				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftX);
+				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftTrigger);
 				std::cout << input * 100 << " " << static_cast<int>(item.Type()) << std::endl;
 				auto ac = reinterpret_cast<ControllerKit::AdaptiveTriggerController*>(&item);
-				ac->SetTriggerContinuousAdvanced(
-					ControllerKit::Types::Trigger::Left,
-					1.0f,
-					1.0f,
-					0.2,
-					0.5,
-					1,
-					0.1,
-					true
-				);
 
-				ac->SetTriggerSectionalAdvanced(
-					ControllerKit::Types::Trigger::Right,
-					0.1f,
-					0.01f,
-					1.0f,
-					0.0f,
-					0.0f,
-					1.0f,
-					0.05f,
-					false
-				);
 
-				
+				if (input > 0.2f) {
+					ac->SetTriggerAdvanced(
+						ControllerKit::Types::Trigger::Left,
+						1.0f,
+						0.0f,
+						0.6f,
+						1.0f,
+						0.05f,
+						false
+					);
+				}
+				else {
+					ac->SetTriggerDisabled(ControllerKit::Types::Trigger::Left);
+				}
+
+				input = item.GetAxis(ControllerKit::Types::Axis::RightTrigger);
+
+				if (input > 0.7f) {
+					ac->SetTriggerAdvanced(
+						ControllerKit::Types::Trigger::Right,
+						0.2f,
+						0.0f,
+						0.6f,
+						1.0f,
+						0.05f,
+						false
+					);
+				} else {
+					ac->SetTriggerDisabled(ControllerKit::Types::Trigger::Right);
+				}
 			}
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));
 			system("cls");
