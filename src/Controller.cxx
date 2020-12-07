@@ -78,6 +78,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::GetButtonState(Button button) const -> ButtonState {
+		if(_report.Buttons.empty()) {
+			return ButtonState::Released;
+		}
 		std::scoped_lock<std::mutex> lock(_reportMtx);
 		uint8_t state = 0;
 		state += _report.Buttons.at(button);
