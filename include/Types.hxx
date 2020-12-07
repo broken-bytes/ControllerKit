@@ -90,7 +90,6 @@ namespace BrokenBytes::ControllerKit::Types {
 		Disabled = 0x00,
 		Continuous = 0x01,
 		Sectional = 0x02,
-		ContinuousAdvanced = 0x25,
-		SectionalAdvanced = 0x26
+		Advanced = 0x24
 	};
 }

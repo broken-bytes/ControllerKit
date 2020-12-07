@@ -40,7 +40,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 		AdaptiveTriggerMode mode,
 		Params params
 	) -> void {
-		std::cout << "Trigger" << std::endl;
 		const auto trPerm = (trigger == Trigger::Left) ?
 			Permission1::LeftTrigger :
 			Permission1::RightTrigger;

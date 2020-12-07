@@ -143,20 +143,24 @@ namespace BrokenBytes::ControllerKit {
 			float frequency,
 			bool pauseOnPressed
 		) const -> void {
-			auto* c = dynamic_cast<Internal::IAdaptiveTriggerController*>(
-				Interface::GetControllers()[Player()]
-				);
+			auto* raw = Interface::GetControllers()[Player()];
 			Internal::IAdaptiveTriggerController::Params params{};
 			params.ForceOrEnd = Math::ConvertToUnsignedShort(force);
-			params.ForceOrEnd |= (pauseOnPressed) ? 0x00 : 0x02;
+			params.ForceOrEnd &= (pauseOnPressed) ? 0x00 : 0x02;
 			params.Start = Math::ConvertToUnsignedShort(start);
 			params.Strength = {
 				Math::ConvertToUnsignedShort(strengthReleased),
 				Math::ConvertToUnsignedShort(strengthMiddle),
 				Math::ConvertToUnsignedShort(strengthPressed)
 			};
-			params.Frequency = frequency;
-			c->SetTrigger(trigger, Types::AdaptiveTriggerMode::ContinuousAdvanced, params);
+			params.Frequency = Math::ConvertToUnsignedShort(frequency);
+			if (Type() == Types::ControllerType::DualSense) {
+				dynamic_cast<Internal::DualSense*>(raw)->SetTrigger(
+					trigger,
+					Types::AdaptiveTriggerMode::ContinuousAdvanced,
+					params
+				);
+			}
 		}
 
 		auto SetTriggerSectional(
@@ -165,14 +169,18 @@ namespace BrokenBytes::ControllerKit {
 			float end,
 			float force
 		) const -> void {
-			auto* c = dynamic_cast<Internal::IAdaptiveTriggerController*>(
-				Interface::GetControllers()[Player()]
-				);
+			auto* raw = Interface::GetControllers()[Player()];
 			Internal::IAdaptiveTriggerController::Params params{};
 			params.ForceOrEnd = Math::ConvertToUnsignedShort(end);
 			params.Start = Math::ConvertToUnsignedShort(start);
 			params.ForceInRange = force;
-			c->SetTrigger(trigger, Types::AdaptiveTriggerMode::Sectional, params);
+			if (Type() == Types::ControllerType::DualSense) {
+				dynamic_cast<Internal::DualSense*>(raw)->SetTrigger(
+					trigger,
+					Types::AdaptiveTriggerMode::Sectional,
+					params
+				);
+			}
 		}
 
 		auto SetTriggerSectionalAdvanced(
@@ -186,9 +194,7 @@ namespace BrokenBytes::ControllerKit {
 			float frequency,
 			bool pauseOnPressed
 		) const -> void {
-			auto* c = dynamic_cast<Internal::IAdaptiveTriggerController*>(
-				Interface::GetControllers()[Player()]
-				);
+			auto* raw = Interface::GetControllers()[Player()];
 			Internal::IAdaptiveTriggerController::Params params{};
 			params.ForceOrEnd = Math::ConvertToUnsignedShort(end);
 			params.Start = Math::ConvertToUnsignedShort(start);
@@ -198,8 +204,14 @@ namespace BrokenBytes::ControllerKit {
 				Math::ConvertToUnsignedShort(strengthMiddle),
 				Math::ConvertToUnsignedShort(strengthPressed)
 			};
-			params.Frequency = frequency;
-			c->SetTrigger(trigger, Types::AdaptiveTriggerMode::SectionalAdvanced, params);
+			params.Frequency = Math::ConvertToUnsignedShort(frequency);
+			if (Type() == Types::ControllerType::DualSense) {
+				dynamic_cast<Internal::DualSense*>(raw)->SetTrigger(
+					trigger,
+					Types::AdaptiveTriggerMode::SectionalAdvanced,
+					params
+				);
+			}
 		}
 	};
 
