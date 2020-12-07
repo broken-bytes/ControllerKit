@@ -165,6 +165,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 				if(item.GetButtonState(ControllerKit::Types::Button::Cross) == ControllerKit::Types::ButtonState::Pressed) {
 					item.SetLightbarColor({ 255,0 ,255 });
 				}
+
+				if (item.GetButtonState(ControllerKit::Types::Button::A) == ControllerKit::Types::ButtonState::Pressed) {
+					item.SetImpulseTrigger(ControllerKit::Types::Trigger::Right, 1.0f);
+				}
+
 			}
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(50));

@@ -1,10 +1,15 @@
 #pragma once
 
 #include <vector>
-
 #include "DualSense.hxx"
 #include "Controller.hxx"
 #include "DualShock4.hxx"
+#ifdef _W10
+#include "GamingInputController.hxx"
+#else
+#include "XInputController.hxx"
+#endif
+#include "GamingInputController.hxx"
 #include "Types.hxx"
 #include "interfaces/IAdaptiveTriggerController.hxx"
 #include "interfaces/IGyroscopeController.hxx"
@@ -75,11 +80,18 @@ namespace BrokenBytes::ControllerKit {
 		) const -> void = 0;
 	};
 
+	class ImpulseTriggerController {
+	public:
+		virtual auto SetImpulseTrigger(Types::Trigger trigger, float strength) -> void = 0;
+	};
+
+
 	class Controller :
 		public AdaptiveTriggerController,
 		public LightbarController,
 		public TouchpadController,
-		public GyroController {
+		public GyroController,
+		public ImpulseTriggerController {
 	public:
 		Controller(uint8_t player, Types::ControllerType type) {
 			_player = player;
@@ -106,7 +118,7 @@ namespace BrokenBytes::ControllerKit {
 				return true;
 				break;
 			case Types::Feature::Gyroscope:
-				if(dynamic_cast<Internal::IGyroscopeController*>(raw)) {
+				if (dynamic_cast<Internal::IGyroscopeController*>(raw)) {
 					return true;
 				}
 				break;
@@ -130,7 +142,7 @@ namespace BrokenBytes::ControllerKit {
 					return true;
 				}
 				break;
-			default: ;
+			default:;
 			}
 			return false;
 		}
@@ -236,10 +248,10 @@ namespace BrokenBytes::ControllerKit {
 
 		auto SetLightbarColor(Types::Color color) const -> void override {
 			auto raw = Interface::GetControllers()[Player()];
-			if(Type() == Types::ControllerType::DualSense) {
+			if (Type() == Types::ControllerType::DualSense) {
 				dynamic_cast<Internal::DualSense*>(raw)->SetLightbarColor(color);
 			}
-			if(Type() == Types::ControllerType::DualShock4) {
+			if (Type() == Types::ControllerType::DualShock4) {
 				dynamic_cast<Internal::DualShock4*>(raw)->SetLightbarColor(color);
 			}
 		}
@@ -268,7 +280,20 @@ namespace BrokenBytes::ControllerKit {
 				);
 			return c->ReadAcceleration();
 		}
-		
+
+		auto SetImpulseTrigger(Types::Trigger trigger, float strength) -> void override {
+			auto raw = Interface::GetControllers()[Player()];
+			if (Type() == Types::ControllerType::XBoxOne || Type() == Types::ControllerType::XBoxSeries) {
+				auto motor = (trigger == Types::Trigger::Left) ?
+					Types::Rumble::TriggerLeft :
+					Types::Rumble::TriggerRight;
+				dynamic_cast<Internal::GamingInputController*>(raw)->SetRumble(
+					motor,
+					Math::ConvertToUnsignedShort(strength)
+				);
+			}
+		}
+
 	private:
 		uint8_t _player;
 		Types::ControllerType _type;

@@ -1,8 +1,4 @@
 #include <vector>
-
-/// Defines Windows 10 Target
-#define _W10
-
 #ifdef _W10          // Exclude rarely-used stuff from Windows headers
 #define NOMINMAX
 // Windows Header Files
@@ -47,7 +43,7 @@ namespace BrokenBytes::ControllerKit::Interface {
 
 	std::vector<ControllerDevice> HID_CONTROLLERS;
 	std::thread WATCHDOG;
-#ifdef  _W10
+#ifdef _W10
 	std::vector<GamingInputController*> W10_CONTROLLERS;
 	concurrency::critical_section myLock{};
 
