@@ -17,6 +17,7 @@
 #include <thread>
 
 using namespace BrokenBytes;
+using namespace BrokenBytes::ControllerKit::Types;
 
 void RedirectIOToConsole() {
 
@@ -124,7 +125,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftTrigger);
 
 				item.SetLightbarColor(ControllerKit::Types::Color{ 255, 55, 0 });
-	
+
 				if (input > 0.2f) {
 					item.SetTriggerAdvanced(
 						ControllerKit::Types::Trigger::Left,
@@ -140,12 +141,28 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 					item.SetTriggerDisabled(ControllerKit::Types::Trigger::Left);
 				}
 
-				input = item.GetAxis(ControllerKit::Types::Axis::RightTrigger);
+				input = item.GetAxis(Axis::RightTrigger);
 
 
-				item.SetImpulseTrigger(ControllerKit::Types::Trigger::Right, input);
+				item.SetImpulseTrigger(Trigger::Right, input);
 
+				auto state = item.GetButtonState(Button::Cross);
+				if (state == ButtonState::Pressed) {
+					item.SetLightbarColor({ 255,50,50 });
+				}
 
+				switch (state)
+				{
+				case ButtonState::Down:
+					std::cout << "Down" << std::endl;
+					break;
+				case ButtonState::Pressed:
+					break;
+				break; case ButtonState::Up:
+					std::cout << "Up" << std::endl;
+				break; case ButtonState::Released:
+					break;
+				}
 			}
 		}
 		}

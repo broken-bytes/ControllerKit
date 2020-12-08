@@ -18,7 +18,7 @@ namespace BrokenBytes::ControllerKit::Types {
 
 namespace BrokenBytes::ControllerKit::Internal {
 	struct InputReport {
-		std::map<Types::Button, bool> Buttons;
+		std::map<uint8_t, bool> Buttons;
 		Math::Vector2<float> LeftStick;
 		Math::Vector2<float> RightStick;
 		float LeftTrigger;

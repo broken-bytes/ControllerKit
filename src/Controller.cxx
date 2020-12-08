@@ -81,10 +81,13 @@ namespace BrokenBytes::ControllerKit::Internal {
 		if(_report.Buttons.empty()) {
 			return ButtonState::Released;
 		}
+		if (_lastReport.Buttons.empty()) {
+			return ButtonState::Released;
+		}
 		std::scoped_lock<std::mutex> lock(_reportMtx);
 		uint8_t state = 0;
-		state += _report.Buttons.at(button);
-		state += _lastReport.Buttons.at(button) * 2;
+		state += _report.Buttons.at(static_cast<uint8_t>(button));
+		state += _lastReport.Buttons.at(static_cast<uint8_t>(button)) * 2;
 
 		switch (state) {
 		case 0: return ButtonState::Released;
@@ -101,7 +104,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 
 	auto Controller::SetInputReport(InputReport report) -> void {
 		std::scoped_lock<std::mutex> lock(_reportMtx);
-		_lastReport = report;
+		_lastReport = _report;
 		_report = report;
 	}
 }

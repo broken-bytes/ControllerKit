@@ -22,45 +22,45 @@ namespace BrokenBytes::ControllerKit::Mapping {
 			static_cast<float>(input.RightThumbstickX),
 			static_cast<float>(input.RightThumbstickY)
 		};
-		auto buttons = std::map<Button, bool>();
+		auto buttons = std::map<uint8_t, bool>();
 		buttons.emplace(
-			Button::A,
+			static_cast<uint8_t>(Button::A),
 			static_cast<bool>(input.Buttons & GamepadButtons::A)
 		);
 		buttons.emplace(
-			Button::B,
+			static_cast<uint8_t>(Button::B),
 			static_cast<bool>(input.Buttons & GamepadButtons::B)
 		);
 		buttons.emplace(
-			Button::X,
+			static_cast<uint8_t>(Button::X),
 			static_cast<bool>(input.Buttons & GamepadButtons::X)
 		);
 		buttons.emplace(
-			Button::Y,
+			static_cast<uint8_t>(Button::Y),
 			static_cast<bool>(input.Buttons & GamepadButtons::Y)
 		);
 		buttons.emplace(
-			Button::LB,
+			static_cast<uint8_t>(Button::LB),
 			static_cast<bool>(input.Buttons & GamepadButtons::LeftShoulder)
 		);
 		buttons.emplace(
-			Button::RB,
+			static_cast<uint8_t>(Button::RB),
 			static_cast<bool>(input.Buttons & GamepadButtons::RightShoulder)
 		);
 		buttons.emplace(
-			Button::View,
+			static_cast<uint8_t>(Button::View),
 			static_cast<bool>(input.Buttons & GamepadButtons::View)
 		);
 		buttons.emplace(
-			Button::Menu,
+			static_cast<uint8_t>(Button::Menu),
 			static_cast<bool>(input.Buttons & GamepadButtons::Menu)
 		);
 		buttons.emplace(
-			Button::L3,
+			static_cast<uint8_t>(Button::L3),
 			static_cast<bool>(input.Buttons & GamepadButtons::LeftThumbstick)
 		);
 		buttons.emplace(
-			Button::R3,
+			static_cast<uint8_t>(Button::R3),
 			static_cast<bool>(input.Buttons & GamepadButtons::RightThumbstick)
 		);
 		rep.Buttons = buttons;
@@ -72,26 +72,26 @@ namespace BrokenBytes::ControllerKit::Mapping {
 	}
 
 	inline auto InputReportFromDualShock4(unsigned char* input)->Internal::InputReport {
-		auto buttons = std::map<Button, bool>();
+		auto buttons = std::map<uint8_t, bool>();
 		std::bitset<8> buff5(input[5]);
-		buttons.emplace(Button::Square, buff5[4]);
-		buttons.emplace(Button::Cross, buff5[5]);
-		buttons.emplace(Button::Circle, buff5[6]);
-		buttons.emplace(Button::Triangle, buff5[7]);
+		buttons.emplace(static_cast<uint8_t>(Button::Cross), buff5[5]);
+		buttons.emplace(static_cast<uint8_t>(Button::Square), buff5[4]);
+		buttons.emplace(static_cast<uint8_t>(Button::Circle), buff5[6]);
+		buttons.emplace(static_cast<uint8_t>(Button::Triangle), buff5[7]);
 
 		std::bitset<8> buff6(input[6]);
-		buttons.emplace(Button::L1, buff6[0]);
-		buttons.emplace(Button::R1, buff6[1]);
-		buttons.emplace(Button::R2, buff6[2]);
-		buttons.emplace(Button::L2, buff6[3]);
-		buttons.emplace(Button::Share, buff6[4]);
-		buttons.emplace(Button::Options, buff6[5]);
-		buttons.emplace(Button::L3, buff6[6]);
-		buttons.emplace(Button::R3, buff6[7]);
+		buttons.emplace(static_cast<uint8_t>(Button::L1), buff6[0]);
+		buttons.emplace(static_cast<uint8_t>(Button::R1), buff6[1]);
+		buttons.emplace(static_cast<uint8_t>(Button::R2), buff6[2]);
+		buttons.emplace(static_cast<uint8_t>(Button::L2), buff6[3]);
+		buttons.emplace(static_cast<uint8_t>(Button::Share), buff6[4]);
+		buttons.emplace(static_cast<uint8_t>(Button::Options), buff6[5]);
+		buttons.emplace(static_cast<uint8_t>(Button::L3), buff6[6]);
+		buttons.emplace(static_cast<uint8_t>(Button::R3), buff6[7]);
 
 		std::bitset<8> buff7(input[6]);
-		buttons.emplace(Button::PS, buff6[0]);
-		buttons.emplace(Button::TouchPad, buff6[1]);
+		buttons.emplace(static_cast<uint8_t>(Button::PS), buff6[0]);
+		buttons.emplace(static_cast<uint8_t>(Button::TouchPad), buff6[1]);
 
 		DPadDirection dpad = DPadDirection::None;
 		switch (input[5] & 0x000F) {
@@ -140,22 +140,22 @@ namespace BrokenBytes::ControllerKit::Mapping {
 	}
 
 	inline auto InputReportFromDualSense(unsigned char* input)->Internal::InputReport {
-		auto buttons = std::map<Button, bool>();
-		buttons.emplace(Button::Square, input[8] & 0x10);
-		buttons.emplace(Button::Cross, input[8] & 0x20);
-		buttons.emplace(Button::Circle, input[8] & 0x40);
-		buttons.emplace(Button::Triangle, input[8] & 0x80);
-		buttons.emplace(Button::L1, input[9] & 0x01);
-		buttons.emplace(Button::R1, input[9] & 0x02);
-		buttons.emplace(Button::L2, input[9] & 0x04);
-		buttons.emplace(Button::R2, input[9] & 0x08);
-		buttons.emplace(Button::Create, input[9] & 0x10);
-		buttons.emplace(Button::Options, input[9] & 0x20);
-		buttons.emplace(Button::L3, input[9] & 0x40);
-		buttons.emplace(Button::R3, input[9] & 0x80);
-		buttons.emplace(Button::PS, input[10] & 0x01);
-		buttons.emplace(Button::PS_MUTE, input[10] & 0x04);
-		buttons.emplace(Button::TouchPad, input[10] & 0x02);
+		auto buttons = std::map<uint8_t, bool>();
+		buttons.emplace(static_cast<uint8_t>(Button::Cross), input[8] & 0x20);
+		buttons.emplace(static_cast<uint8_t>(Button::Square), input[8] & 0x10);
+		buttons.emplace(static_cast<uint8_t>(Button::Circle), input[8] & 0x40);
+		buttons.emplace(static_cast<uint8_t>(Button::Triangle), input[8] & 0x80);
+		buttons.emplace(static_cast<uint8_t>(Button::L1), input[9] & 0x01);
+		buttons.emplace(static_cast<uint8_t>(Button::R1), input[9] & 0x02);
+		buttons.emplace(static_cast<uint8_t>(Button::L2), input[9] & 0x04);
+		buttons.emplace(static_cast<uint8_t>(Button::R2), input[9] & 0x08);
+		buttons.emplace(static_cast<uint8_t>(Button::Create), input[9] & 0x10);
+		buttons.emplace(static_cast<uint8_t>(Button::Options), input[9] & 0x20);
+		buttons.emplace(static_cast<uint8_t>(Button::L3), input[9] & 0x40);
+		buttons.emplace(static_cast<uint8_t>(Button::R3), input[9] & 0x80);
+		buttons.emplace(static_cast<uint8_t>(Button::PS), input[10] & 0x01);
+		buttons.emplace(static_cast<uint8_t>(Button::PS_MUTE), input[10] & 0x04);
+		buttons.emplace(static_cast<uint8_t>(Button::TouchPad), input[10] & 0x02);
 
 		DPadDirection dpad = DPadDirection::None;
 		switch (input[8] & 0x000F) {
