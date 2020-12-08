@@ -283,11 +283,13 @@ namespace BrokenBytes::ControllerKit {
 
 		auto SetImpulseTrigger(Types::Trigger trigger, float strength) -> void override {
 			auto raw = Interface::GetControllers()[Player()];
-			if (Type() == Types::ControllerType::XBoxOne || Type() == Types::ControllerType::XBoxSeries) {
+			if (Type() == Types::ControllerType::XBoxOne ||
+				Type() == Types::ControllerType::XBoxSeries
+				) {
 				auto motor = (trigger == Types::Trigger::Left) ?
 					Types::Rumble::TriggerLeft :
 					Types::Rumble::TriggerRight;
-				dynamic_cast<Internal::GamingInputController*>(raw)->SetRumble(
+				reinterpret_cast<Internal::GamingInputController*>(raw)->SetRumble(
 					motor,
 					Math::ConvertToUnsignedShort(strength)
 				);

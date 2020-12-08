@@ -56,8 +56,8 @@ namespace BrokenBytes::ControllerKit::Interface {
 	}
 
 	void Init() {
-		USB::Init();
 		GamingInput::Init();
+		USB::Init();
 		Gamepad::GamepadAdded(&OnGamepadAdded);
 		Gamepad::GamepadRemoved(&OnGamepadRemoved);
 		QueryDevices();

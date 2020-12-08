@@ -122,11 +122,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 		while (true) {
 			for (auto item : ControllerKit::Controllers()) {
 				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftTrigger);
-				std::cout << input * 100 << " " << static_cast<int>(item.Type()) << std::endl;
 
 				item.SetLightbarColor(ControllerKit::Types::Color{ 255, 55, 0 });
-
-				
+	
 				if (input > 0.2f) {
 					item.SetTriggerAdvanced(
 						ControllerKit::Types::Trigger::Left,
@@ -144,36 +142,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 
 				input = item.GetAxis(ControllerKit::Types::Axis::RightTrigger);
 
-				if (input > 0.8f) {
-					item.SetTriggerAdvanced(
-						ControllerKit::Types::Trigger::Right,
-						0.2f,
-						0.0f,
-						0.0f,
-						1.0f,
-						0.05f,
-						false
-					);
-				} else {
-					item.SetTriggerContinuous(
-						ControllerKit::Types::Trigger::Right,
-						0.5f,
-						1.0f
-					);
-				}
 
-				if(item.GetButtonState(ControllerKit::Types::Button::Cross) == ControllerKit::Types::ButtonState::Pressed) {
-					item.SetLightbarColor({ 255,0 ,255 });
-				}
+				item.SetImpulseTrigger(ControllerKit::Types::Trigger::Right, input);
 
-				if (item.GetButtonState(ControllerKit::Types::Button::A) == ControllerKit::Types::ButtonState::Pressed) {
-					item.SetImpulseTrigger(ControllerKit::Types::Trigger::Right, 1.0f);
-				}
 
 			}
-
-			std::this_thread::sleep_for(std::chrono::milliseconds(50));
-			system("cls");
 		}
 		}
 	);

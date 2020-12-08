@@ -12,8 +12,8 @@ using namespace winrt::Windows::Gaming::Input;
 namespace BrokenBytes::ControllerKit::Mapping {
 	inline auto InputReportFromXBoxOne(const GamepadReading& input)->Internal::InputReport {
 		Internal::InputReport rep{};
-		rep.LeftTrigger = input.LeftTrigger;
-		rep.RightTrigger = input.RightTrigger;
+		rep.LeftTrigger = static_cast<float>(input.LeftTrigger);
+		rep.RightTrigger = static_cast<float>(input.RightTrigger);
 		rep.LeftStick = {
 			static_cast<float>(input.LeftThumbstickX),
 			static_cast<float>(input.LeftThumbstickY)

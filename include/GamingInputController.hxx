@@ -4,12 +4,16 @@
 #include "interfaces/IRumbleController.hxx"
 #include "interfaces/IImpulseTriggerController.hxx"
 #include <winrt/Windows.Gaming.Input.h>
+#include <wrl.h>
 
 namespace Gaming = winrt::Windows::Gaming::Input;
 namespace Foundation = winrt::Windows::Foundation::Collections;
 
 namespace BrokenBytes::ControllerKit::Internal {
-	class GamingInputController : Controller, IRumbleController, IImpulseTriggerController {
+	class GamingInputController :
+	public Controller,
+	public IRumbleController,
+	public IImpulseTriggerController {
 	public:
 		GamingInputController();
 		auto Equals(void* data) -> bool override;
@@ -19,7 +23,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		std::thread _worker;
 		std::vector<Gaming::Gamepad> _gamepads;
 		const Gaming::Gamepad* _gamepad = nullptr;
-
+		Gaming::GamepadVibration _vibration;
+		
 		auto Routine() -> void;
 	};
 }

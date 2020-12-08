@@ -17,6 +17,7 @@ constexpr uint8_t SLEEP_MS = 1;
 
 namespace BrokenBytes::ControllerKit::Internal {
 	GamingInputController::GamingInputController() : Controller(Types::ControllerType::XBoxOne), IRumbleController(), IImpulseTriggerController() {
+		_vibration = { 0,0,0,0 };
 		_worker = std::thread([this]() {this->Routine(); });
 		if(_gamepads.empty()) {
 			for(const auto& item: GamingInput::Gamepads()) {
@@ -51,14 +52,23 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	void GamingInputController::SetRumble(Rumble motor, uint8_t strength) {
-
+		if(_gamepad != nullptr) {
+			auto current = _gamepad->Vibration();
+			if (motor == Rumble::TriggerLeft) {
+				current.LeftTrigger = Math::ConvertToUnsignedFloat(strength);
+			}
+			if (motor == Rumble::TriggerRight) {
+				current.RightTrigger = Math::ConvertToUnsignedFloat(strength);
+			}
+			_gamepad->Vibration(current);
+		}
 	}
 
 	auto GamingInputController::Routine() -> void {
 		while (true) {
 			if(_gamepad == nullptr) {
 				continue;
-			}	
+			}
 			SetInputReport(Mapping::InputReportFromXBoxOne(_gamepad->GetCurrentReading()));
 			std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_MS));
 		}
