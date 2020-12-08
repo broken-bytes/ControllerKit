@@ -9,8 +9,6 @@ using namespace BrokenBytes::ControllerKit::Types;
 
 namespace BrokenBytes::ControllerKit::Internal {
 	Controller::Controller(ControllerType type) {
-		_lastReport = {};
-		_report = {};
 		this->_type = type;
 		for (int x = 0; x < controllers.size(); x++) {
 			if (controllers[x] == nullptr) {
@@ -68,7 +66,10 @@ namespace BrokenBytes::ControllerKit::Internal {
 		std::cout << +static_cast<uint8_t>(Type()) << "Next() Left: " << _queue.size() << std::endl;
 	}
 
-	Vector2<float> Controller::GetStick(uint8_t id) const {
+	auto Controller::GetStick(uint8_t id) const -> Vector2<float> {
+		if (_queue.empty()) {
+			return {0,0};
+		}
 		if (id == 0) {
 			auto stick = _queue.front().LeftStick;
 			return {
@@ -84,6 +85,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::GetTrigger(Trigger t) const -> float {
+		if(_queue.empty()) {
+			return 0;
+		}
 		if (t == Trigger::Left) {
 			return _queue.front().LeftTrigger;
 		}
@@ -91,6 +95,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::GetDPadDirection() const -> DPadDirection {
+		if (_queue.empty()) {
+			return DPadDirection::None;
+		}
 		DPadDirection dir = DPadDirection::None;
 		switch (_queue.front().DPad) {
 		case 1:
@@ -148,20 +155,53 @@ namespace BrokenBytes::ControllerKit::Internal {
 			_queue.push(report);
 			return;
 		}
-		for (auto& item : _queue.back().Buttons) {
+
+		auto changed = false;
+		auto& lastReport = _queue.back();
+
+		if(report.LeftTrigger != lastReport.LeftTrigger) {
+			changed = true;
+		}
+
+		if (report.RightTrigger != lastReport.RightTrigger) {
+			changed = true;
+		}
+
+		if(!Math::IsInLimits<uint8_t>(
+				report.LeftStick,
+				lastReport.LeftStick,
+				1
+			)) {
+			changed = true;
+		}
+
+		if (report.DPad != lastReport.DPad) {
+			changed = true;
+		}
+		
+		
+		for (auto& item : lastReport.Buttons) {
 			switch (item.second) {
 			case 1:
 			case 3:
 				if (report.Buttons[item.first] == 0) {
 					report.Buttons[item.second] = 2;
+					changed = true;
 					break;
 				}
 				report.Buttons[item.second] = 3;
 				break;
 			case 0:
+				if(report.Buttons[item.second] == 1) {
+					changed = true;
+				}
+				break;
 			default:
 				break;
 			}
+		}
+		if(!changed) {
+			return;
 		}
 		_queue.push(report);
 	}

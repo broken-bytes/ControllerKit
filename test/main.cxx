@@ -165,7 +165,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 				}
 			}
 			ControllerKit::Next();
-			std::this_thread::sleep_for(std::chrono::milliseconds(15));
+			std::this_thread::sleep_for(std::chrono::milliseconds(40));
 		}
 		}
 	);

@@ -30,7 +30,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 		SetClear();
 		
 		while (Device() != nullptr) {
-			auto start = std::chrono::high_resolution_clock::now();
 			memset(buffer, 0, DUALSHOCK4_READ_REPORT_SIZE);
 			size_t bytesRead = DUALSHOCK4_READ_REPORT_SIZE;
 			ReadReport(buffer, bytesRead);
@@ -47,11 +46,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 				_report[31] = crc[3];
 				SendReport(_report, write);
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(
-				end - start
-				);
-			std::cout << "Dualshock Inputrate: " << milliseconds.count() << "ms" << std::endl;
 		}
 		delete buffer;
 	}

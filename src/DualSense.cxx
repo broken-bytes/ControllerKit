@@ -105,7 +105,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 		SetClear();
 
 		while (Device() != nullptr) {
-			auto start = std::chrono::high_resolution_clock::now();
 			memset(buffer, 0, DUALSENSE_READ_REPORT_SIZE);
 			size_t bytesRead = DUALSENSE_READ_REPORT_SIZE;
 			ReadReport(buffer, bytesRead);
@@ -115,12 +114,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 				SendReport(_report, write);
 				SetClear();
 			}
-			auto end = std::chrono::high_resolution_clock::now();
-			auto milliseconds = std::chrono::duration_cast<std::chrono::microseconds>(
-				end - start
-				);
-			std::cout << "Dualsense Inputrate: " << milliseconds.count() << "_ms" << std::endl;
 		}
-		delete buffer;
+		delete[] buffer;
 	}
 }

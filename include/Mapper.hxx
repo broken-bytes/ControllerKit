@@ -167,21 +167,21 @@ namespace BrokenBytes::ControllerKit::Mapping {
 
 	inline auto InputReportFromDualSense(unsigned char* input)->Internal::InputReport {
 		auto buttons = std::map<uint8_t, uint8_t>();
-		buttons.emplace(static_cast<uint8_t>(Button::Cross), input[8] & 0x20);
-		buttons.emplace(static_cast<uint8_t>(Button::Square), input[8] & 0x10);
-		buttons.emplace(static_cast<uint8_t>(Button::Circle), input[8] & 0x40);
-		buttons.emplace(static_cast<uint8_t>(Button::Triangle), input[8] & 0x80);
-		buttons.emplace(static_cast<uint8_t>(Button::L1), input[9] & 0x01);
-		buttons.emplace(static_cast<uint8_t>(Button::R1), input[9] & 0x02);
-		buttons.emplace(static_cast<uint8_t>(Button::L2), input[9] & 0x04);
-		buttons.emplace(static_cast<uint8_t>(Button::R2), input[9] & 0x08);
-		buttons.emplace(static_cast<uint8_t>(Button::Create), input[9] & 0x10);
-		buttons.emplace(static_cast<uint8_t>(Button::Options), input[9] & 0x20);
-		buttons.emplace(static_cast<uint8_t>(Button::L3), input[9] & 0x40);
-		buttons.emplace(static_cast<uint8_t>(Button::R3), input[9] & 0x80);
-		buttons.emplace(static_cast<uint8_t>(Button::PS), input[10] & 0x01);
-		buttons.emplace(static_cast<uint8_t>(Button::PS_MUTE), input[10] & 0x04);
-		buttons.emplace(static_cast<uint8_t>(Button::TouchPad), input[10] & 0x02);
+		buttons.emplace(static_cast<uint8_t>(Button::Cross), (bool)(input[8] & 0x20));
+		buttons.emplace(static_cast<uint8_t>(Button::Square), (bool)(input[8] & 0x10));
+		buttons.emplace(static_cast<uint8_t>(Button::Circle), (bool)(input[8] & 0x40));
+		buttons.emplace(static_cast<uint8_t>(Button::Triangle), (bool)(input[8] & 0x80));
+		buttons.emplace(static_cast<uint8_t>(Button::L1), (bool)(input[9] & 0x01));
+		buttons.emplace(static_cast<uint8_t>(Button::R1), (bool)(input[9] & 0x02));
+		buttons.emplace(static_cast<uint8_t>(Button::L2), (bool)(input[9] & 0x04));
+		buttons.emplace(static_cast<uint8_t>(Button::R2), (bool)(input[9] & 0x08));
+		buttons.emplace(static_cast<uint8_t>(Button::Create), (bool)(input[9] & 0x10));
+		buttons.emplace(static_cast<uint8_t>(Button::Options), (bool)(input[9] & 0x20));
+		buttons.emplace(static_cast<uint8_t>(Button::L3), (bool)(input[9] & 0x40));
+		buttons.emplace(static_cast<uint8_t>(Button::R3), (bool)(input[9] & 0x80));
+		buttons.emplace(static_cast<uint8_t>(Button::PS), (bool)(input[10] & 0x01));
+		buttons.emplace(static_cast<uint8_t>(Button::PS_MUTE), (bool)(input[10] & 0x04));
+		buttons.emplace(static_cast<uint8_t>(Button::TouchPad), (bool)(input[10] & 0x02));
 
 		DPadDirection dpad = DPadDirection::None;
 		switch (input[8] & 0x000F) {
