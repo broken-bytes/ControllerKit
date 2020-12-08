@@ -59,11 +59,10 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::Next() -> void {
-		while (_queue.size() < 2) {
-			// Wait until we have two elements, so we can calculate the last state etc
+		if (_queue.size() < 2) {
+			return;
 		}
 		_queue.pop();
-		std::cout << +static_cast<uint8_t>(Type()) << "Next() Left: " << _queue.size() << std::endl;
 	}
 
 	auto Controller::GetStick(uint8_t id) const -> Vector2<float> {
@@ -151,7 +150,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::SetInputReport(InputReport report) -> void {
-		if (_queue.size() < 2) {
+		if (_queue.empty()) {
 			_queue.push(report);
 			return;
 		}
@@ -179,22 +178,38 @@ namespace BrokenBytes::ControllerKit::Internal {
 			changed = true;
 		}
 		
-		
 		for (auto& item : lastReport.Buttons) {
 			switch (item.second) {
 			case 1:
-			case 3:
 				if (report.Buttons[item.first] == 0) {
-					report.Buttons[item.second] = 2;
+					report.Buttons[item.first] = 2;
 					changed = true;
 					break;
 				}
-				report.Buttons[item.second] = 3;
+				report.Buttons[item.first] = 3;
+				changed = true;
+				break;
+			case 3:
+				if (report.Buttons[item.first] == 0) {
+					report.Buttons[item.first] = 2;
+					changed = true;
+					break;
+				}
+				report.Buttons[item.first] = 3;
 				break;
 			case 0:
-				if(report.Buttons[item.second] == 1) {
+				if(report.Buttons[item.first] == 1) {
 					changed = true;
 				}
+				break;
+			case 2:
+				if (report.Buttons[item.first] == 1) {
+					changed = true;
+					report.Buttons[item.first] = 1;
+					break;
+				}
+				changed = true;
+				report.Buttons[item.first] = 0;
 				break;
 			default:
 				break;
