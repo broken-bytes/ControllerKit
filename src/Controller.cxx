@@ -11,7 +11,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 	Controller::Controller(ControllerType type) {
 		_lastReport = {};
 		_report = {};
-		_queue.push({});
 		this->_type = type;
 		for (int x = 0; x < controllers.size(); x++) {
 			if (controllers[x] == nullptr) {
@@ -127,6 +126,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::GetButtonState(Button button) const -> ButtonState {
+		if (_queue.empty()) {
+			return ButtonState::Released;
+		}
 		switch (_queue.front().Buttons.at(static_cast<uint8_t>(button))) {
 		case 1: return ButtonState::Down;
 		case 2: return ButtonState::Up;
@@ -142,9 +144,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::SetInputReport(InputReport report) -> void {
-		_lastReport = _report;
-		_report = report;
-
 		if (_queue.size() < 2) {
 			_queue.push(report);
 			return;

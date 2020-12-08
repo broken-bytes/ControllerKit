@@ -114,8 +114,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 			)> _OnConnected;
 		static inline std::function<void(uint8_t id)> _OnDisconnected;
 		std::queue<InputReport> _queue;
-		InputReport _lastReport;
-		InputReport _report;
 		mutable std::mutex _reportMtx;
 		Types::ControllerType _type;
 		uint8_t _number;
