@@ -164,6 +164,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 					break;
 				}
 			}
+			ControllerKit::Next();
+			std::this_thread::sleep_for(std::chrono::milliseconds(15));
 		}
 		}
 	);

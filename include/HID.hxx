@@ -8,6 +8,7 @@
 typedef HANDLE HIDDevice;
 typedef wchar_t* DevicePath;
 #endif
+#include <functional>
 typedef unsigned char byte;
 
 namespace BrokenBytes::ControllerKit::HID {	
@@ -16,5 +17,4 @@ namespace BrokenBytes::ControllerKit::HID {
 	auto WriteToDevice(HIDDevice device, byte* data, size_t length) -> size_t;
 	auto ReadFromDevice(HIDDevice device, byte* data, size_t length) -> size_t;
 	auto SetOutputReport(HIDDevice device, byte* data, size_t length) -> size_t;	
-
 }

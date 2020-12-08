@@ -70,6 +70,25 @@ namespace BrokenBytes::ControllerKit::Math {
 		auto ui = static_cast<uint8_t>(val);
 		return ui;
 	}
+
+	/// <summary>
+	/// Converts a value from double range to ushort range from 0 - 255
+	/// </summary>
+	/// <param name="value"></param>
+	/// <returns>The float value</returns>
+	inline auto ConvertToUnsignedShort(double value) -> uint8_t {
+		auto val = value;
+		if (val > 1) {
+			val = 1;
+		}
+		if (val < 0) {
+			val = 0;
+		}
+		val *= 255;
+		auto ui = static_cast<uint8_t>(val);
+		return ui;
+	}
+
 	
 
 	/// <summary>

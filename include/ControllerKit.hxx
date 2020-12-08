@@ -301,12 +301,40 @@ namespace BrokenBytes::ControllerKit {
 		Types::ControllerType _type;
 	};
 
+	/// <summary>
+	/// Initializes the library
+	/// </summary>
+	/// <returns></returns>
 	DLL_EXPORT void Init();
+	/// <summary>
+	/// Gets the connected controllers
+	/// </summary>
+	/// <returns>The list of controllers</returns>
 	DLL_EXPORT auto Controllers()->std::vector<Controller>;
 	DLL_EXPORT auto GetControllerType(int controller)->Types::ControllerType;
+	/// <summary>
+	/// Clears the input queue
+	/// </summary>
+	/// <returns></returns>
+	DLL_EXPORT auto Flush() -> void;
+	/// <summary>
+	/// Moves the input queue one forward, removing the current entry
+	/// </summary>
+	/// <returns></returns>
+	DLL_EXPORT auto Next() -> void;
+	/// <summary>
+	/// Assigns the connected event callback
+	/// </summary>
+	/// <param name="controller"></param>
+	/// <returns></returns>
 	DLL_EXPORT auto OnControllerConnected(
 		std::function<void(uint8_t id, Types::ControllerType type)> controller
 	) -> void;
+	/// <summary>
+	/// Assigns the disconnected event callback
+	/// </summary>
+	/// <param name="controller"></param>
+	/// <returns></returns>
 	DLL_EXPORT auto OnControllerDisconnected(
 		std::function<void(uint8_t id)> controller
 	) -> void;

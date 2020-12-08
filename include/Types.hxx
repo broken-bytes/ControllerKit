@@ -27,14 +27,14 @@ namespace BrokenBytes::ControllerKit::Types {
 
 	enum class DPadDirection {
 		None,
-		Left,
-		LeftUp,
-		Up,
-		RightUp,
-		Right,
-		RightDown,
-		Down,
-		LeftDown
+		Left = 1,
+		Up = 2,
+		LeftUp = 3,
+		Right = 4,
+		RightUp = 6,
+		Down = 8,
+		LeftDown = 9,
+		RightDown = 12
 	};
 
 	enum class Trigger {

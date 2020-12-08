@@ -10,60 +10,84 @@ using namespace BrokenBytes::ControllerKit::Types;
 using namespace winrt::Windows::Gaming::Input;
 
 namespace BrokenBytes::ControllerKit::Mapping {
+	/// <summary>
+	/// Holds the raw bianry values for each DPad state on DualSense and Dualshock(3?)4 devices
+	/// </summary>
+	enum class DS_DPad_Bin {
+		Up = 0x00,
+		RightUp = 0x01,
+		Right = 0x02,
+		RightDown = 0x03,
+		Down = 0x04,
+		LeftDown = 0x05,
+		Left = 0x06,
+		LeftUp = 0x07,
+		None = 0x08
+	};
+
 	inline auto InputReportFromXBoxOne(const GamepadReading& input)->Internal::InputReport {
-		Internal::InputReport rep{};
-		rep.LeftTrigger = static_cast<float>(input.LeftTrigger);
-		rep.RightTrigger = static_cast<float>(input.RightTrigger);
-		rep.LeftStick = {
-			static_cast<float>(input.LeftThumbstickX),
-			static_cast<float>(input.LeftThumbstickY)
-		};
-		rep.RightStick = {
-			static_cast<float>(input.RightThumbstickX),
-			static_cast<float>(input.RightThumbstickY)
-		};
-		auto buttons = std::map<uint8_t, bool>();
+		auto buttons = std::map<uint8_t, uint8_t>();
 		buttons.emplace(
 			static_cast<uint8_t>(Button::A),
-			static_cast<bool>(input.Buttons & GamepadButtons::A)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::A)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::B),
-			static_cast<bool>(input.Buttons & GamepadButtons::B)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::B)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::X),
-			static_cast<bool>(input.Buttons & GamepadButtons::X)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::X)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::Y),
-			static_cast<bool>(input.Buttons & GamepadButtons::Y)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::Y)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::LB),
-			static_cast<bool>(input.Buttons & GamepadButtons::LeftShoulder)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::LeftShoulder)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::RB),
-			static_cast<bool>(input.Buttons & GamepadButtons::RightShoulder)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::RightShoulder)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::View),
-			static_cast<bool>(input.Buttons & GamepadButtons::View)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::View)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::Menu),
-			static_cast<bool>(input.Buttons & GamepadButtons::Menu)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::Menu)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::L3),
-			static_cast<bool>(input.Buttons & GamepadButtons::LeftThumbstick)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::LeftThumbstick)
 		);
 		buttons.emplace(
 			static_cast<uint8_t>(Button::R3),
-			static_cast<bool>(input.Buttons & GamepadButtons::RightThumbstick)
+			static_cast<uint8_t>(input.Buttons & GamepadButtons::RightThumbstick)
 		);
-		rep.Buttons = buttons;
+
+		uint8_t dpad = 0;
+		dpad += static_cast<uint8_t>(input.Buttons & GamepadButtons::DPadLeft) * 1;
+		dpad += static_cast<uint8_t>(input.Buttons & GamepadButtons::DPadUp) * 2;
+		dpad += static_cast<uint8_t>(input.Buttons & GamepadButtons::DPadRight) * 4;
+		dpad += static_cast<uint8_t>(input.Buttons & GamepadButtons::DPadDown) * 8;
+
+		Internal::InputReport rep {
+			buttons, 
+			{
+				Math::ConvertToUnsignedShort(input.LeftThumbstickX),
+				Math::ConvertToUnsignedShort(input.LeftThumbstickY)
+			},
+			{
+				Math::ConvertToUnsignedShort(input.RightThumbstickX),
+				Math::ConvertToUnsignedShort(input.RightThumbstickY)
+			},
+			Math::ConvertToUnsignedShort(input.LeftTrigger),
+			Math::ConvertToUnsignedShort(input.RightTrigger),
+			dpad
+		};
 		return rep;
 	}
 
@@ -72,7 +96,7 @@ namespace BrokenBytes::ControllerKit::Mapping {
 	}
 
 	inline auto InputReportFromDualShock4(unsigned char* input)->Internal::InputReport {
-		auto buttons = std::map<uint8_t, bool>();
+		auto buttons = std::map<uint8_t, uint8_t>();
 		std::bitset<8> buff5(input[5]);
 		buttons.emplace(static_cast<uint8_t>(Button::Cross), buff5[5]);
 		buttons.emplace(static_cast<uint8_t>(Button::Square), buff5[4]);
@@ -95,52 +119,54 @@ namespace BrokenBytes::ControllerKit::Mapping {
 
 		DPadDirection dpad = DPadDirection::None;
 		switch (input[5] & 0x000F) {
-		case 0b0000:
+		case static_cast<uint8_t>(DS_DPad_Bin::Up):
 			dpad = DPadDirection::Up;
 			break;
-		case 0b0001:
+		case static_cast<uint8_t>(DS_DPad_Bin::RightUp) :
 			dpad = DPadDirection::RightUp;
 			break;
-		case 0b0010:
+		case static_cast<uint8_t>(DS_DPad_Bin::Right) :
 			dpad = DPadDirection::Right;
 			break;
-		case 0b0011:
+		case static_cast<uint8_t>(DS_DPad_Bin::RightDown) :
 			dpad = DPadDirection::RightDown;
 			break;
-		case 0b0100:
+		case static_cast<uint8_t>(DS_DPad_Bin::Down) :
 			dpad = DPadDirection::Down;
 			break;
-		case 0b0101:
+		case static_cast<uint8_t>(DS_DPad_Bin::LeftDown):
 			dpad = DPadDirection::LeftDown;
 			break;
-		case 0b0110:
+		case static_cast<uint8_t>(DS_DPad_Bin::Left) :
 			dpad = DPadDirection::Left;
 			break;
-		case 0b0111:
+		case static_cast<uint8_t>(DS_DPad_Bin::LeftUp) :
 			dpad = DPadDirection::LeftUp;
 			break;
-		case 0b1000:
+		case static_cast<uint8_t>(DS_DPad_Bin::None) :
 			dpad = DPadDirection::None;
 			break;
 		}
 
 		Internal::InputReport report{
 			buttons,
-			Math::Vector2<float>{
-			Math::ConvertToSignedFloat(input[1]),
-			Math::ConvertToSignedFloat(input[2])
-		},Math::Vector2<float> {
-			Math::ConvertToSignedFloat(input[3]),
-			Math::ConvertToSignedFloat(input[4])
-		},Math::ConvertToUnsignedFloat(input[8]),
-			Math::ConvertToUnsignedFloat(input[9]),
-			dpad
+			{
+				input[1],
+				input[2]
+			},
+			{
+				input[3],
+				input[4]
+			},
+			input[8],
+			input[9],
+			static_cast<uint8_t>(dpad)
 		};
 		return report;
 	}
 
 	inline auto InputReportFromDualSense(unsigned char* input)->Internal::InputReport {
-		auto buttons = std::map<uint8_t, bool>();
+		auto buttons = std::map<uint8_t, uint8_t>();
 		buttons.emplace(static_cast<uint8_t>(Button::Cross), input[8] & 0x20);
 		buttons.emplace(static_cast<uint8_t>(Button::Square), input[8] & 0x10);
 		buttons.emplace(static_cast<uint8_t>(Button::Circle), input[8] & 0x40);
@@ -159,31 +185,31 @@ namespace BrokenBytes::ControllerKit::Mapping {
 
 		DPadDirection dpad = DPadDirection::None;
 		switch (input[8] & 0x000F) {
-		case 0b0000:
+		case static_cast<uint8_t>(DS_DPad_Bin::Up) :
 			dpad = DPadDirection::Up;
 			break;
-		case 0b0001:
+		case static_cast<uint8_t>(DS_DPad_Bin::RightUp) :
 			dpad = DPadDirection::RightUp;
 			break;
-		case 0b0010:
+		case static_cast<uint8_t>(DS_DPad_Bin::Right) :
 			dpad = DPadDirection::Right;
 			break;
-		case 0b0011:
+		case static_cast<uint8_t>(DS_DPad_Bin::RightDown) :
 			dpad = DPadDirection::RightDown;
 			break;
-		case 0b0100:
+		case static_cast<uint8_t>(DS_DPad_Bin::Down) :
 			dpad = DPadDirection::Down;
 			break;
-		case 0b0101:
+		case static_cast<uint8_t>(DS_DPad_Bin::LeftDown) :
 			dpad = DPadDirection::LeftDown;
 			break;
-		case 0b0110:
+		case static_cast<uint8_t>(DS_DPad_Bin::Left) :
 			dpad = DPadDirection::Left;
 			break;
-		case 0b0111:
+		case static_cast<uint8_t>(DS_DPad_Bin::LeftUp) :
 			dpad = DPadDirection::LeftUp;
 			break;
-		case 0b1000:
+		case static_cast<uint8_t>(DS_DPad_Bin::None) :
 			dpad = DPadDirection::None;
 			break;
 		}
@@ -191,16 +217,16 @@ namespace BrokenBytes::ControllerKit::Mapping {
 		Internal::InputReport report{
 			buttons,
 			{
-				Math::ConvertToSignedFloat(input[1]),
-				Math::ConvertToSignedFloat(input[2])
+				input[1],
+				input[2]
 			},
 			{
-				Math::ConvertToSignedFloat(input[3]),
-				Math::ConvertToSignedFloat(input[4])
+				input[3],
+				input[4]
 			},
-			Math::ConvertToUnsignedFloat(input[5]),
-			Math::ConvertToUnsignedFloat(input[6]),
-			dpad
+			input[5],
+			input[6],
+			static_cast<uint8_t>(dpad)
 		};
 		return report;
 	}

@@ -54,7 +54,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			Permission1::LeftTrigger :
 			Permission1::RightTrigger;
 		SetPermission(trPerm, Permission2::MotorPower);
-		if(trigger == Trigger::Right) {
+		if (trigger == Trigger::Right) {
 			_report[11] = static_cast<uint8_t>(mode);
 			_report[12] = params.Start;
 			_report[13] = params.ForceOrEnd;
@@ -63,7 +63,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 			_report[16] = params.Strength.Middle;
 			_report[17] = params.Strength.Pressed;
 			_report[20] = params.Frequency;
-		} else {
+		}
+		else {
 			_report[22] = static_cast<uint8_t>(mode);
 			_report[23] = params.Start;
 			_report[24] = params.ForceOrEnd;
@@ -78,7 +79,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto DualSense::GetTouches() -> std::vector<Math::Vector2<float>> {
-		return std::vector<Vector2<float>> (0, {0,0});
+		return std::vector<Vector2<float>>(0, { 0,0 });
 	}
 
 	auto DualSense::SetDirty() -> void {
@@ -102,8 +103,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 		auto* buffer = new unsigned char[DUALSENSE_READ_REPORT_SIZE];
 		_report = new unsigned char[DUALSENSE_WRITE_REPORT_SIZE];
 		SetClear();
-		
+
 		while (Device() != nullptr) {
+			auto start = std::chrono::high_resolution_clock::now();
 			memset(buffer, 0, DUALSENSE_READ_REPORT_SIZE);
 			size_t bytesRead = DUALSENSE_READ_REPORT_SIZE;
 			ReadReport(buffer, bytesRead);
@@ -113,6 +115,11 @@ namespace BrokenBytes::ControllerKit::Internal {
 				SendReport(_report, write);
 				SetClear();
 			}
+			auto end = std::chrono::high_resolution_clock::now();
+			auto milliseconds = std::chrono::duration_cast<std::chrono::microseconds>(
+				end - start
+				);
+			std::cout << "Dualsense Inputrate: " << milliseconds.count() << "_ms" << std::endl;
 		}
 		delete buffer;
 	}

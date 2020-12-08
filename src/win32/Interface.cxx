@@ -64,6 +64,33 @@ namespace BrokenBytes::ControllerKit::Interface {
 		
 	}
 #endif
+	auto Flush() -> void {
+		for (auto& item : Controller::Controllers()) {
+			item.second->Flush();
+		}
+	}
+
+	auto Next() -> void {
+		for (auto& item : Controller::Controllers()) {
+			item.second->Next();
+		}
+	}
+
+	auto GetControllers() -> std::map<uint8_t, Controller*> {
+		return Controller::Controllers();
+	}
+
+
+
+	auto OnControllerConnected(
+		std::function<void(uint8_t id, Types::ControllerType type)> controller
+	) -> void {
+		Controller::OnControllerConnected(controller);
+	}
+
+	auto OnControllerDisconnected(std::function<void(uint8_t id)> controller) -> void {
+		Controller::OnControllerDisconnected(controller);
+	}
 
 	auto QueryDevices() -> void {
 		auto devices = USB::EnumerateDevices();
@@ -89,20 +116,6 @@ namespace BrokenBytes::ControllerKit::Interface {
 				}
 			}
 		}
-	}
-
-	auto OnControllerConnected(
-		std::function<void(uint8_t id, Types::ControllerType type)> controller
-	) -> void {
-		Controller::OnControllerConnected(controller);
-	}
-
-	auto OnControllerDisconnected(std::function<void(uint8_t id)> controller) -> void {
-		Controller::OnControllerDisconnected(controller);
-	}
-
-	auto GetControllers() -> std::map<uint8_t, Controller*> {
-		return Controller::Controllers();
 	}
 
 	auto SetData(uint8_t controller, unsigned char* data) -> void {}
