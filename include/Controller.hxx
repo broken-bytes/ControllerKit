@@ -2,7 +2,6 @@
 #include <functional>
 #include <thread>
 #include <map>
-#include <mutex>
 #include <queue>
 #include <type_traits>
 #include <typeinfo>
@@ -114,7 +113,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 			)> _OnConnected;
 		static inline std::function<void(uint8_t id)> _OnDisconnected;
 		std::queue<InputReport> _queue;
-		mutable std::mutex _reportMtx;
 		Types::ControllerType _type;
 		uint8_t _number;
 

@@ -4,7 +4,6 @@
 #include "interfaces/IRumbleController.hxx"
 #include "interfaces/IImpulseTriggerController.hxx"
 #include <winrt/Windows.Gaming.Input.h>
-#include <wrl.h>
 
 namespace Gaming = winrt::Windows::Gaming::Input;
 namespace Foundation = winrt::Windows::Foundation::Collections;
