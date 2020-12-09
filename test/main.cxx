@@ -159,25 +159,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 				if (state == ButtonState::Released) {
 					item.SetLightbarColor({ 0,0,0 });
 				}
-
-				switch (state)
-				{
-				case ButtonState::Down:
-					std::cout << "Down" << std::endl;
-					break;
-				case ButtonState::Up:
-					std::cout << "Up" << std::endl;
-					break;
-				case ButtonState::Released:
-					std::cout << "Released" << std::endl;
-					break;
-				case ButtonState::Pressed:
-					std::cout << "Pressed" << std::endl;
-					break;
-				}
 			}
 			ControllerKit::Next();
-			std::this_thread::sleep_for(std::chrono::milliseconds(33));
+			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		}
 		}
 	);
