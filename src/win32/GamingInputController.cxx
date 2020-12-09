@@ -13,7 +13,6 @@ concurrency::critical_section LOCK{};
 using namespace BrokenBytes::ControllerKit::Types;
 using namespace winrt::Windows::Gaming::Input;
 
-constexpr uint8_t SLEEP_MS = 1;
 
 namespace BrokenBytes::ControllerKit::Internal {
 	GamingInputController::GamingInputController() : Controller(Types::ControllerType::XBoxOne), IRumbleController(), IImpulseTriggerController() {
@@ -70,7 +69,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 				continue;
 			}
 			SetInputReport(Mapping::InputReportFromXBoxOne(_gamepad->GetCurrentReading()));
-			std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_MS));
 		}
 	}
 }

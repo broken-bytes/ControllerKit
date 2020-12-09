@@ -3,6 +3,7 @@
 #include <thread>
 #include <map>
 #include <mutex>
+#include <queue>
 #include <type_traits>
 #include <typeinfo>
 
@@ -18,12 +19,12 @@ namespace BrokenBytes::ControllerKit::Types {
 
 namespace BrokenBytes::ControllerKit::Internal {
 	struct InputReport {
-		std::map<uint8_t, bool> Buttons;
-		Math::Vector2<float> LeftStick;
-		Math::Vector2<float> RightStick;
-		float LeftTrigger;
-		float RightTrigger;
-		Types::DPadDirection DPad;
+		std::map<uint8_t, uint8_t> Buttons;
+		Math::Vector2<uint8_t> LeftStick;
+		Math::Vector2<uint8_t> RightStick;
+		uint8_t LeftTrigger;
+		uint8_t RightTrigger;
+		uint8_t DPad;
 	};
 	
 	class Controller
@@ -91,6 +92,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 			std::function<void(uint8_t id)> callback
 		) -> void;
 
+		virtual auto Flush() -> void;
+		virtual auto Next() -> void;
+
 		[[nodiscard]] virtual auto GetStick(uint8_t id) const->Math::Vector2<float>;
 		[[nodiscard]] virtual auto GetTrigger(Types::Trigger t) const -> float;
 		[[nodiscard]] virtual auto GetDPadDirection() const->Types::DPadDirection;
@@ -109,8 +113,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			Types::ControllerType type
 			)> _OnConnected;
 		static inline std::function<void(uint8_t id)> _OnDisconnected;
-		InputReport _lastReport;
-		InputReport _report;
+		std::queue<InputReport> _queue;
 		mutable std::mutex _reportMtx;
 		Types::ControllerType _type;
 		uint8_t _number;

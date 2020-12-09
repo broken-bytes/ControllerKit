@@ -31,6 +31,14 @@ namespace BrokenBytes::ControllerKit {
 		return Interface::GetControllers()[controller]->Type();
 	}
 
+	auto Flush() -> void {
+		Interface::Flush();
+	}
+
+	auto Next() -> void {
+		Interface::Next();
+	}
+
 	auto OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> controller) -> void {
 		Interface::OnControllerConnected(std::move(controller));
 	}

@@ -32,7 +32,6 @@ namespace BrokenBytes::ControllerKit::HID {
 		DWORD read = 0;
 		memset(data, 0, length);
 		if(!ReadFile(device, data, length, &read, nullptr)) {
-			auto err = GetLastError();
 			return 0;
 		}
 		return read;

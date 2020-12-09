@@ -58,7 +58,6 @@ void RedirectIOToConsole() {
 	std::cerr.clear();
 	std::wcin.clear();
 	std::cin.clear();
-
 }
 
 
@@ -124,8 +123,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 			for (auto item : ControllerKit::Controllers()) {
 				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftTrigger);
 
-				item.SetLightbarColor(ControllerKit::Types::Color{ 255, 55, 0 });
-
 				if (input > 0.2f) {
 					item.SetTriggerAdvanced(
 						ControllerKit::Types::Trigger::Left,
@@ -147,8 +144,20 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 				item.SetImpulseTrigger(Trigger::Right, input);
 
 				auto state = item.GetButtonState(Button::Cross);
+				if (state == ButtonState::Up) {
+					item.SetLightbarColor({ 255,0,0 });
+				}
+
 				if (state == ButtonState::Pressed) {
-					item.SetLightbarColor({ 255,50,50 });
+					item.SetLightbarColor({ 0,255,0 });
+				}
+
+				if (state == ButtonState::Down) {
+					item.SetLightbarColor({ 0,0,255 });
+				}
+
+				if (state == ButtonState::Released) {
+					item.SetLightbarColor({ 0,0,0 });
 				}
 
 				switch (state)
@@ -156,14 +165,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 				case ButtonState::Down:
 					std::cout << "Down" << std::endl;
 					break;
-				case ButtonState::Pressed:
-					break;
-				break; case ButtonState::Up:
+				case ButtonState::Up:
 					std::cout << "Up" << std::endl;
-				break; case ButtonState::Released:
+					break;
+				case ButtonState::Released:
+					std::cout << "Released" << std::endl;
+					break;
+				case ButtonState::Pressed:
+					std::cout << "Pressed" << std::endl;
 					break;
 				}
 			}
+			ControllerKit::Next();
+			std::this_thread::sleep_for(std::chrono::milliseconds(33));
 		}
 		}
 	);
