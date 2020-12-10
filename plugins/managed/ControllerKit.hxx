@@ -6,55 +6,50 @@ using namespace BrokenBytes::ControllerKit::Types;
 using namespace BrokenBytes::ControllerKit;
 #pragma managed(pop)
 
-
-#define DLL_EXPORT __declspec( dllexport )
+#include <cliext/set>
+#define DLL_EXPORT
 
 namespace BrokenBytes::ControllerKit::Managed {
-	class Controller {
+	public ref class Controller {
 	public:
-		Controller(BrokenBytes::ControllerKit::Controller* c) {
-			this->_controller = c;
-		}
-
-		~Controller() {
-			delete _controller;
+		Controller(uint8_t player) {
+			this->_player = player;
 		}
 
 		static inline auto Controllers() {
-			auto list = std::vector<Managed::Controller*>();
+			auto list = std::vector<uint8_t>();
 			auto unmanaged = ControllerKit::Controllers();
 			for (auto item : unmanaged) {
-				list.emplace_back(new Managed::Controller(&item));
+				list.emplace_back();
 			}
 		}
 
-
 		auto GetAxis(Types::Axis axis) {
-			return _controller->GetAxis(axis);
+			return GetController().GetAxis(axis);
 		}
 
 		auto GetButtonState(Types::Button button) {
-			return _controller->GetButtonState(button);
+			return GetController().GetButtonState(button);
 		}
 
 		auto Type() {
-			return _controller->Type();
+			return GetController().Type();
 		}
 
 		auto SetLightbarColor(Types::Color color) {
-			_controller->SetLightbarColor(color);
+			GetController().SetLightbarColor(color);
 		}
 
 		auto SetTriggerDisabled(Types::Trigger trigger) {
-			_controller->SetTriggerDisabled(trigger);
+			GetController().SetTriggerDisabled(trigger);
 		}
 
 		auto SetTriggerContinuous(Types::Trigger trigger, float start, float force) {
-			_controller->SetTriggerContinuous(trigger, start, force);
+			GetController().SetTriggerContinuous(trigger, start, force);
 		}
 
 		auto SetTriggerSectional(Types::Trigger trigger, float start, float end, float force) {
-			_controller->SetTriggerSectional(trigger, start, end, force);
+			GetController().SetTriggerSectional(trigger, start, end, force);
 		}
 
 		auto SetTriggerAdvanced(
@@ -65,7 +60,8 @@ namespace BrokenBytes::ControllerKit::Managed {
 			float strengthPressed,
 			float frequency,
 			bool pauseOnPressed) {
-			_controller->SetTriggerAdvanced(
+
+			GetController().SetTriggerAdvanced(
 				trigger,
 				extension,
 				strengthReleased,
@@ -77,12 +73,19 @@ namespace BrokenBytes::ControllerKit::Managed {
 		}
 
 		auto SetImpulseTrigger(Types::Trigger trigger, float strength) {
-			_controller->SetImpulseTrigger(trigger, strength);
+			GetController().SetImpulseTrigger(trigger, strength);	
 		}
 
 	private:
-		static inline std::vector<Managed::Controller> _controllers;
-		BrokenBytes::ControllerKit::Controller* _controller;
+		uint8_t _player;
+
+		auto GetController() -> BrokenBytes::ControllerKit::Controller {
+			for (auto& item : ControllerKit::Controllers()) {
+				if (item.Player() == _player) {
+					return item;
+				}
+			}
+		}
 	};
 
 	DLL_EXPORT auto Init() {
