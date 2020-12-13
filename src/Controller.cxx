@@ -2,7 +2,6 @@
 
 
 #include "Controller.hxx"
-#include "Types.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
 using namespace BrokenBytes::ControllerKit::Types;

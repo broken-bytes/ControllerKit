@@ -5,7 +5,6 @@
 #include "DualShock4.hxx"
 #include "ControllerKit.hxx"
 #include "Mapper.hxx"
-#include "Types.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
 using namespace BrokenBytes::ControllerKit::Types;

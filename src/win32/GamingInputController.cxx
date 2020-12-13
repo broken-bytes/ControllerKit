@@ -3,9 +3,8 @@
 
 #include "Gaming.Input.hxx"
 #include "GamingInputController.hxx"
-
+#include "ControllerKit.hxx"
 #include "Controller.hxx"
-#include "Types.hxx"
 #include "Mapper.hxx"
 
 concurrency::critical_section LOCK{};

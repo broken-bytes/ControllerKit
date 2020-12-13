@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Interface.hxx"
-
 namespace BrokenBytes::ControllerKit::Types {
 	struct Color {
 		uint8_t R;

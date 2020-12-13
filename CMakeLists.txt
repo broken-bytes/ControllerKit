@@ -26,8 +26,7 @@ set(SRC_INCLUDE
 	include/USB.hxx
 	include/HID.hxx
 	include/Math.hxx
-	include/Types.hxx
-  include/Controller.hxx
+  	include/Controller.hxx
 	include/HIDController.hxx
 	include/DualShock4.hxx
 	include/DualSense.hxx
