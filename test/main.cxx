@@ -121,14 +121,34 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	t = std::thread([]() {
 		while (true) {
 			for (auto item : ControllerKit::Controllers()) {
-				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftTrigger);
+				auto input = item.GetAxis(ControllerKit::Types::Axis::RightTrigger);
 
-		
-				item.SetTriggerDisabled(ControllerKit::Types::Trigger::Left);
-				item.SetTriggerDisabled(ControllerKit::Types::Trigger::Right);
-				input = item.GetAxis(Axis::LeftX);
-				std::cout << input << std::endl;
+				item.SetTriggerAdvanced(
+					ControllerKit::Types::Trigger::Right,
+					1.0f,
+					0.0f,
+					0.6f,
+					1.0f,
+					0.05f,
+					false
+				);
+				
+				if (input > 0.2f) {
+					item.SetTriggerAdvanced(
+						ControllerKit::Types::Trigger::Right,
+						.3f,
+						0.4f,
+						1.0f,
+						1.0f,
+						0.05f,
+						false
+					);
+				}
+				else {
+					item.SetTriggerDisabled(ControllerKit::Types::Trigger::Right);
+				}
 
+				input = item.GetAxis(Axis::RightTrigger);
 
 
 				item.SetImpulseTrigger(Trigger::Right, input);

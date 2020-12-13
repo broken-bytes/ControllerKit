@@ -107,6 +107,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		size_t bytesRead = DUALSENSE_READ_REPORT_SIZE;
 		ReadReport(_buffer, bytesRead);
 		SetInputReport(Mapping::InputReportFromDualSense(_buffer));
+		return;
 		if (IsDirty()) {
 			size_t write = static_cast<uint8_t>(DUALSENSE_WRITE_REPORT_SIZE);
 			SendReport(_report, write);

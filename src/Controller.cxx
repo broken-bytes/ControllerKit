@@ -156,7 +156,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto Controller::SetInputReport(InputReport report) -> void {
-		if (_queue.empty()) {
+		if (_queue.size() < 2) {
 			_queue.push(report);
 			return;
 		}
