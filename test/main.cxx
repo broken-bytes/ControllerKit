@@ -155,10 +155,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 				if (state == ButtonState::Down) {
 					item.SetLightbarColor({ 0,0,255 });
 				}
-
-				if (state == ButtonState::Released) {
-					item.SetLightbarColor({ 0,0,0 });
-				}
 			}
 			ControllerKit::Next();
 			std::this_thread::sleep_for(std::chrono::milliseconds(10));

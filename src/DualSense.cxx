@@ -13,6 +13,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		ILightbarController(),
 		IAdaptiveTriggerController(),
 		ITouchpadController() {
+		_report = new unsigned char[DUALSENSE_WRITE_REPORT_SIZE];
 		_thread = std::thread([this]() {this->Routine(); });
 	}
 
@@ -102,7 +103,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 
 	auto DualSense::Routine() -> void {
 		auto* buffer = new unsigned char[DUALSENSE_READ_REPORT_SIZE];
-		_report = new unsigned char[DUALSENSE_WRITE_REPORT_SIZE];
 		SetClear();
 
 		while (Device() != nullptr) {

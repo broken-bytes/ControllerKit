@@ -16,6 +16,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		IGyroscopeController(),
 		ILightbarController(),
 		ITouchpadController() {
+		_report = new unsigned char[DUALSHOCK4_WRITE_REPORT_SIZE];
 		_thread = std::thread([this]() {this->Routine(); });
 	}
 
@@ -25,7 +26,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 
 	auto DualShock4::Routine() -> void {
 		auto* buffer = new unsigned char[DUALSHOCK4_READ_REPORT_SIZE];
-		_report = new unsigned char[DUALSHOCK4_WRITE_REPORT_SIZE];
 		SetClear();
 		
 		while (Device() != nullptr) {
