@@ -6,6 +6,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	: Controller(type) {
 		this->_path = path;
 		this->_device = nullptr;
+		this->_isDirty = false;
 		HID::OpenDevice(path, &_device);
 	}
 

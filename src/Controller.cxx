@@ -1,8 +1,6 @@
 ﻿#include <utility>
-
-
+#include "ControllerKit.hxx"
 #include "Controller.hxx"
-#include "Types.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
 using namespace BrokenBytes::ControllerKit::Types;
@@ -10,6 +8,7 @@ using namespace BrokenBytes::ControllerKit::Types;
 namespace BrokenBytes::ControllerKit::Internal {
 	Controller::Controller(ControllerType type) {
 		this->_type = type;
+		this->_number = 0;
 		for (int x = 0; x < controllers.size(); x++) {
 			if (controllers[x] == nullptr) {
 				controllers.emplace(x, this);
@@ -44,7 +43,10 @@ namespace BrokenBytes::ControllerKit::Internal {
 		if (_OnConnected == nullptr) {
 			return;
 		}
-		_OnConnected(controllers.size() - 1, controller->Type());
+		_OnConnected(
+			static_cast<uint8_t>(controllers.size() - 1),
+			controller->Type()
+		);
 	}
 
 	auto Controller::OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> callback) -> void {

@@ -1,5 +1,6 @@
 #include "DualSense.hxx"
 #include "Mapper.hxx"
+#include "ControllerKit.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
 using namespace BrokenBytes::ControllerKit::Types;
@@ -110,7 +111,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			ReadReport(buffer, bytesRead);
 			SetInputReport(Mapping::InputReportFromDualSense(buffer));
 			if (IsDirty()) {
-				size_t write = DUALSENSE_WRITE_REPORT_SIZE;
+				size_t write = static_cast<uint8_t>(DUALSENSE_WRITE_REPORT_SIZE);
 				SendReport(_report, write);
 				SetClear();
 			}

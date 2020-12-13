@@ -1,5 +1,9 @@
 #pragma once
 
+namespace BrokenBytes::ControllerKit::Types {
+	enum class AdaptiveTriggerMode;
+}
+
 namespace BrokenBytes::ControllerKit::Internal {
 	class IAdaptiveTriggerController {
 	public:
