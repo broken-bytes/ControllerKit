@@ -21,7 +21,7 @@ The following list gives a quick glance of what is done and what is to come:
   - [ ] Gyroscope
   - [x] Lightbar
 - [x] XBox Wireless Controller Support
-  - [ ] Impulse triggers(Only Windows 10)
+  - [x] Impulse triggers(Only Windows 10)
   
   ## Description
   The library makes use of native APIs where possible. Thus, not all features might be present on any platform. 
