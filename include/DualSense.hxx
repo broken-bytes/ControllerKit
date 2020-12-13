@@ -76,11 +76,12 @@ namespace BrokenBytes::ControllerKit::Internal {
 		uint8_t _reportPermissionFlags;
 		unsigned char* _report;
 		Types::Color* _color;
+		unsigned char* _buffer;
 
 		auto SetDirty() -> void override;
 		auto SetClear() -> void override;
 		
 		auto SetPermission(Permission1 perm1, Permission2 perm2) const -> void;
-		auto Routine() -> void;
+		auto Routine() -> void override;
 	};
 }

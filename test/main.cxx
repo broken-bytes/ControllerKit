@@ -123,22 +123,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 			for (auto item : ControllerKit::Controllers()) {
 				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftTrigger);
 
-				if (input > 0.2f) {
-					item.SetTriggerAdvanced(
-						ControllerKit::Types::Trigger::Left,
-						1.0f,
-						0.0f,
-						0.6f,
-						1.0f,
-						0.05f,
-						false
-					);
-				}
-				else {
-					item.SetTriggerDisabled(ControllerKit::Types::Trigger::Left);
-				}
+		
+				item.SetTriggerDisabled(ControllerKit::Types::Trigger::Left);
+				item.SetTriggerDisabled(ControllerKit::Types::Trigger::Right);
+				input = item.GetAxis(Axis::LeftX);
+				std::cout << input << std::endl;
 
-				input = item.GetAxis(Axis::RightTrigger);
 
 
 				item.SetImpulseTrigger(Trigger::Right, input);

@@ -36,6 +36,8 @@ using namespace Microsoft::WRL::Wrappers;
 using namespace BrokenBytes::ControllerKit::Internal;
 
 namespace BrokenBytes::ControllerKit::Interface {
+	std::thread FETCHER;
+
 	struct ControllerDevice {
 		USB::USBDevice* Handle;
 		Controller* Controller;
@@ -65,7 +67,17 @@ namespace BrokenBytes::ControllerKit::Interface {
 #endif
 		USB::Init();
 		QueryDevices();
-		
+		FETCHER = std::thread([] {
+			while (true) {
+				for (auto& item : GetControllers()) {
+					item.second->Fetch();
+				}
+				std::this_thread::sleep_for(
+					std::chrono::microseconds(500)
+				);
+			}
+		});
+
 	}
 	auto Flush() -> void {
 		for (auto& item : Controller::Controllers()) {

@@ -44,10 +44,10 @@ namespace BrokenBytes::ControllerKit::Internal {
 		unsigned char* _report;
 		const uint8_t _pollRateMs = 3;
 		unsigned char _readIndex = 0x01;
-
+		unsigned char* _buffer;
 		std::thread _thread;
 
-		auto Routine() -> void;
+		auto Routine() -> void override;
 		auto SetDirty() -> void override;
 		auto SetClear() -> void override;
 	};

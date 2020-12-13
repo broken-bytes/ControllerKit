@@ -181,7 +181,7 @@ namespace BrokenBytes::ControllerKit::Math {
 	>
 		auto IsInLimits(V target, V value, T limit) -> bool {
 		auto val = target.Magnitude() - value.Magnitude();
-		if (val < limit || val > -limit) {
+		if (val < limit && val > -limit) {
 			return true;
 		}
 		return false;

@@ -93,6 +93,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 
 		virtual auto Flush() -> void;
 		virtual auto Next() -> void;
+		virtual auto Fetch() -> void;
 
 		[[nodiscard]] virtual auto GetStick(uint8_t id) const->Math::Vector2<float>;
 		[[nodiscard]] virtual auto GetTrigger(Types::Trigger t) const -> float;
@@ -117,6 +118,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 		uint8_t _number;
 
 		static auto Add(Controller* controller) -> void;
+
+		virtual auto Routine() -> void = 0;
 	};
 
 }

@@ -25,6 +25,6 @@ namespace BrokenBytes::ControllerKit::Internal {
 		const Gaming::Gamepad* _gamepad = nullptr;
 		Gaming::GamepadVibration _vibration;
 		
-		auto Routine() -> void;
+		auto Routine() -> void override;
 	};
 }

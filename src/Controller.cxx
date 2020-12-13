@@ -67,6 +67,10 @@ namespace BrokenBytes::ControllerKit::Internal {
 		_queue.pop();
 	}
 
+	auto Controller::Fetch() -> void {
+		this->Routine();
+	}
+
 	auto Controller::GetStick(uint8_t id) const -> Vector2<float> {
 		if (_queue.empty()) {
 			return {0,0};
@@ -90,9 +94,9 @@ namespace BrokenBytes::ControllerKit::Internal {
 			return 0;
 		}
 		if (t == Trigger::Left) {
-			return _queue.front().LeftTrigger;
+			return Math::ConvertToUnsignedFloat(_queue.front().LeftTrigger);
 		}
-		return _queue.front().RightTrigger;
+		return Math::ConvertToUnsignedFloat(_queue.front().RightTrigger);
 	}
 
 	auto Controller::GetDPadDirection() const -> DPadDirection {
@@ -171,7 +175,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		if(!Math::IsInLimits<uint8_t>(
 				report.LeftStick,
 				lastReport.LeftStick,
-				1
+				3
 			)) {
 			changed = true;
 		}

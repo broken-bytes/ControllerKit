@@ -13,6 +13,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		ILightbarController(),
 		IAdaptiveTriggerController(),
 		ITouchpadController() {
+		_buffer = new unsigned char[DUALSENSE_READ_REPORT_SIZE];
 		_report = new unsigned char[DUALSENSE_WRITE_REPORT_SIZE];
 		_thread = std::thread([this]() {this->Routine(); });
 	}
@@ -102,20 +103,14 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto DualSense::Routine() -> void {
-		auto* buffer = new unsigned char[DUALSENSE_READ_REPORT_SIZE];
-		SetClear();
-
-		while (Device() != nullptr) {
-			memset(buffer, 0, DUALSENSE_READ_REPORT_SIZE);
-			size_t bytesRead = DUALSENSE_READ_REPORT_SIZE;
-			ReadReport(buffer, bytesRead);
-			SetInputReport(Mapping::InputReportFromDualSense(buffer));
-			if (IsDirty()) {
-				size_t write = static_cast<uint8_t>(DUALSENSE_WRITE_REPORT_SIZE);
-				SendReport(_report, write);
-				SetClear();
-			}
+		memset(_buffer, 0, DUALSENSE_READ_REPORT_SIZE);
+		size_t bytesRead = DUALSENSE_READ_REPORT_SIZE;
+		ReadReport(_buffer, bytesRead);
+		SetInputReport(Mapping::InputReportFromDualSense(_buffer));
+		if (IsDirty()) {
+			size_t write = static_cast<uint8_t>(DUALSENSE_WRITE_REPORT_SIZE);
+			SendReport(_report, write);
+			SetClear();
 		}
-		delete[] buffer;
 	}
 }

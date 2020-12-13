@@ -17,8 +17,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 	GamingInputController::GamingInputController() : Controller(Types::ControllerType::XBoxOne), IRumbleController(), IImpulseTriggerController() {
 		_vibration = { 0,0,0,0 };
 		_worker = std::thread([this]() {this->Routine(); });
-		if(_gamepads.empty()) {
-			for(const auto& item: GamingInput::Gamepads()) {
+		if (_gamepads.empty()) {
+			for (const auto& item : GamingInput::Gamepads()) {
 				auto size = GamingInput::Gamepads().Size();
 				_gamepads.emplace_back(item);
 			}
@@ -26,7 +26,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			auto test = _gamepad->GetCurrentReading().Buttons;
 			return;
 		}
-		for(const auto& item: GamingInput::Gamepads()) {
+		for (const auto& item : GamingInput::Gamepads()) {
 			std::lock_guard g{ LOCK };
 			auto it{
 				std::find(std::begin(_gamepads),
@@ -50,7 +50,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	void GamingInputController::SetRumble(Rumble motor, uint8_t strength) {
-		if(_gamepad != nullptr) {
+		if (_gamepad != nullptr) {
 			auto current = _gamepad->Vibration();
 			if (motor == Rumble::TriggerLeft) {
 				current.LeftTrigger = Math::ConvertToUnsignedFloat(strength);
@@ -63,11 +63,11 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto GamingInputController::Routine() -> void {
-		while (true) {
-			if(_gamepad == nullptr) {
-				continue;
-			}
-			SetInputReport(Mapping::InputReportFromXBoxOne(_gamepad->GetCurrentReading()));
+		if (_gamepad == nullptr) {
+			return;
 		}
+		SetInputReport(
+			Mapping::InputReportFromXBoxOne(_gamepad->GetCurrentReading())
+		);
 	}
 }
