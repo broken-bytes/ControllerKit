@@ -24,8 +24,8 @@ namespace BrokenBytes::ControllerKit::Internal {
 	}
 
 	auto DualShock4::Routine() -> void {
-		auto* buffer = new unsigned char[DUALSENSE_READ_REPORT_SIZE];
-		_report = new unsigned char[DUALSENSE_WRITE_REPORT_SIZE];
+		auto* buffer = new unsigned char[DUALSHOCK4_READ_REPORT_SIZE];
+		_report = new unsigned char[DUALSHOCK4_WRITE_REPORT_SIZE];
 		SetClear();
 		
 		while (Device() != nullptr) {
@@ -46,7 +46,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 				SendReport(_report, write);
 			}
 		}
-		delete buffer;
+		delete[] buffer;
 	}
 
 	auto DualShock4::SetDirty() -> void {

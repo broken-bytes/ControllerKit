@@ -31,8 +31,6 @@ namespace BrokenBytes::ControllerKit {
 		_type = type;
 	}
 
-	Controller::~Controller() = default;
-
 	[[nodiscard]] auto Controller::Player() const ->uint8_t {
 		return _player;
 	}
@@ -75,7 +73,8 @@ namespace BrokenBytes::ControllerKit {
 				return true;
 			}
 			break;
-		default:;
+		default:
+			break;
 		}
 		return false;
 	}
@@ -148,7 +147,7 @@ namespace BrokenBytes::ControllerKit {
 		Internal::IAdaptiveTriggerController::Params params{};
 		params.ForceOrEnd = Math::ConvertToUnsignedShort(end);
 		params.Start = Math::ConvertToUnsignedShort(start);
-		params.ForceInRange = force;
+		params.ForceInRange = Math::ConvertToUnsignedShort(force);
 		if (Type() == Types::ControllerType::DualSense) {
 			dynamic_cast<Internal::DualSense*>(raw)->SetTrigger(
 				trigger,

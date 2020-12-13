@@ -55,15 +55,18 @@ namespace BrokenBytes::ControllerKit::Interface {
 		Controller::Remove<GamingInputController, Gamepad*>(&const_cast<Gamepad&>(gamepad));
 	}
 
+#endif
+
 	void Init() {
+#ifdef _W10
 		GamingInput::Init();
-		USB::Init();
 		Gamepad::GamepadAdded(&OnGamepadAdded);
 		Gamepad::GamepadRemoved(&OnGamepadRemoved);
+#endif
+		USB::Init();
 		QueryDevices();
 		
 	}
-#endif
 	auto Flush() -> void {
 		for (auto& item : Controller::Controllers()) {
 			item.second->Flush();

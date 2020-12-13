@@ -1,12 +1,20 @@
 #pragma once
 
 #include "HIDController.hxx"
-#include "Types.hxx"
 #include "interfaces/IGyroscopeController.hxx"
 #include "interfaces/ILightbarController.hxx"
 #include "interfaces/IRumbleController.hxx"
 #include "interfaces/IAdaptiveTriggerController.hxx"
 #include "interfaces/ITouchpadController.hxx"
+
+namespace BrokenBytes::ControllerKit::Types {
+	enum class Trigger;
+	enum class ControllerType;
+	enum class ButtonState;
+	enum class Button;
+	enum class DPadDirection;
+}
+
 
 namespace BrokenBytes::ControllerKit::Internal {
 	constexpr uint8_t DUALSENSE_READ_REPORT_SIZE = 64;

@@ -30,7 +30,7 @@ namespace BrokenBytes::ControllerKit::Math {
 		}
 
 		auto Magnitude() -> T {
-			return std::sqrt((X * X) + (Y * Y));
+			return static_cast<uint8_t>(std::sqrt((X * X) + (Y * Y)));
 		}
 	};
 

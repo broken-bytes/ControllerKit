@@ -112,7 +112,7 @@ if(MSVC)
 	target_include_directories(${WIN_10}${MANAGED} PUBLIC include/)
 	target_link_directories(${WIN_10}${MANAGED} PUBLIC lib/)
 
-	add_executable(Test WIN32 test/main.cxx)
+	add_executable(Test WIN32 EXCLUDE_FROM_ALL test/main.cxx)
 	target_include_directories(Test PUBLIC include/)
 
 

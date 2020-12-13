@@ -4,7 +4,7 @@
 #include <map>
 #include <memory>
 #include <winrt/Windows.Gaming.Input.h>
-#include "Types.hxx"
+#include "ControllerKit.hxx"
 
 using namespace BrokenBytes::ControllerKit::Types;
 using namespace winrt::Windows::Gaming::Input;
