@@ -27,7 +27,7 @@ using namespace Microsoft::WRL::Wrappers;
 #include "Controller.hxx"
 #include "HID.hxx"
 #include "USB.hxx"
-
+#include <Types.h>
 #include "DualSense.hxx"
 #include "DualShock4.hxx"
 
@@ -86,7 +86,7 @@ namespace BrokenBytes::ControllerKit::Interface {
 
 
 	auto OnControllerConnected(
-		std::function<void(uint8_t id, Types::ControllerType type)> controller
+		std::function<void(uint8_t id, ControllerKitControllerType type)> controller
 	) -> void {
 		Controller::OnControllerConnected(controller);
 	}

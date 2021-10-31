@@ -7,14 +7,7 @@
 #include <typeinfo>
 
 #include "Math.hxx"
-
-namespace BrokenBytes::ControllerKit::Types {
-	enum class Trigger;
-	enum class ControllerType;
-	enum class ButtonState;
-	enum class Button;
-	enum class DPadDirection;
-}
+#include <Types.h>
 
 namespace BrokenBytes::ControllerKit::Internal {
 	struct InputReport {
@@ -29,7 +22,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	class Controller
 	{
 	public:
-		Controller(Types::ControllerType type);
+		Controller(ControllerKitControllerType type);
 		Controller(Controller&) = delete;
 		Controller(Controller&&) = delete;
 		virtual ~Controller();
@@ -85,7 +78,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		}
 
 		static auto OnControllerConnected(
-			std::function<void(uint8_t id, Types::ControllerType type)> callback
+			std::function<void(uint8_t id, ControllerKitControllerType type)> callback
 		) -> void;
 		static auto OnControllerDisconnected(
 			std::function<void(uint8_t id)> callback
@@ -95,12 +88,12 @@ namespace BrokenBytes::ControllerKit::Internal {
 		virtual auto Next() -> void;
 
 		[[nodiscard]] virtual auto GetStick(uint8_t id) const->Math::Vector2<float>;
-		[[nodiscard]] virtual auto GetTrigger(Types::Trigger t) const -> float;
-		[[nodiscard]] virtual auto GetDPadDirection() const->Types::DPadDirection;
+		[[nodiscard]] virtual auto GetTrigger(ControllerKitTrigger t) const -> float;
+		[[nodiscard]] virtual auto GetDPadDirection() const->ControllerKitDPadDirection;
 		[[nodiscard]] virtual auto GetButtonState(
-			Types::Button button
-		) const->Types::ButtonState;
-		[[nodiscard]] auto Type() const->Types::ControllerType;
+			ControllerKitButton button
+		) const->ControllerKitButtonState;
+		[[nodiscard]] auto Type() const->ControllerKitControllerType;
 
 	protected:
 		static inline std::map<uint8_t, Controller*> controllers;
@@ -109,11 +102,11 @@ namespace BrokenBytes::ControllerKit::Internal {
 	private:
 		static inline std::function<void(
 			uint8_t id,
-			Types::ControllerType type
+			ControllerKitControllerType type
 			)> _OnConnected;
 		static inline std::function<void(uint8_t id)> _OnDisconnected;
 		std::queue<InputReport> _queue;
-		Types::ControllerType _type;
+		ControllerKitControllerType _type;
 		uint8_t _number;
 
 		static auto Add(Controller* controller) -> void;

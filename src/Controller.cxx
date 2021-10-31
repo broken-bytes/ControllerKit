@@ -3,10 +3,9 @@
 #include "Controller.hxx"
 
 using namespace BrokenBytes::ControllerKit::Math;
-using namespace BrokenBytes::ControllerKit::Types;
 
 namespace BrokenBytes::ControllerKit::Internal {
-	Controller::Controller(ControllerType type) {
+	Controller::Controller(ControllerKitControllerType type) {
 		this->_type = type;
 		this->_number = 0;
 		for (int x = 0; x < controllers.size(); x++) {
@@ -49,7 +48,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		);
 	}
 
-	auto Controller::OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> callback) -> void {
+	auto Controller::OnControllerConnected(std::function<void(uint8_t id, ControllerKitControllerType type)> callback) -> void {
 		_OnConnected = std::move(callback);
 	}
 	auto Controller::OnControllerDisconnected(std::function<void(uint8_t id)> callback) -> void {
@@ -85,69 +84,69 @@ namespace BrokenBytes::ControllerKit::Internal {
 		};
 	}
 
-	auto Controller::GetTrigger(Trigger t) const -> float {
+	auto Controller::GetTrigger(ControllerKitTrigger t) const -> float {
 		if(_queue.empty()) {
 			return 0;
 		}
-		if (t == Trigger::Left) {
+		if (t == TriggerLeft) {
 			return _queue.front().LeftTrigger;
 		}
 		return _queue.front().RightTrigger;
 	}
 
-	auto Controller::GetDPadDirection() const -> DPadDirection {
+	auto Controller::GetDPadDirection() const -> ControllerKitDPadDirection {
 		if (_queue.empty()) {
-			return DPadDirection::None;
+			return DPadNone;
 		}
-		DPadDirection dir = DPadDirection::None;
+		ControllerKitDPadDirection dir = DPadNone;
 		switch (_queue.front().DPad) {
 		case 1:
-			dir = DPadDirection::Left;
+			dir = DPadLeft;
 			break;
 		case 2:
-			dir = DPadDirection::Up;
+			dir = DPadUp;
 			break;
 		case 3:
-			dir = DPadDirection::LeftUp;
+			dir = DPadLeftUp;
 			break;
 		case 4:
-			dir = DPadDirection::Right;
+			dir = DPadRight;
 			break;
 		case 6:
-			dir = DPadDirection::RightUp;
+			dir = DPadRightUp;
 			break;
 		case 8:
-			dir = DPadDirection::Down;
+			dir = DPadDown;
 			break;
 		case 9:
-			dir = DPadDirection::LeftDown;
+			dir = DPadLeftDown;
 			break;
 		case 12:
-			dir = DPadDirection::RightDown;
+			dir = DPadRightDown;
 			break;
 		default:
 		case 0:
-			dir = DPadDirection::None;
+			dir = DPadNone;
 			break;
 		}
 		return dir;
 	}
 
-	auto Controller::GetButtonState(Button button) const -> ButtonState {
+	auto Controller::GetButtonState(ControllerKitButton button) const -> ControllerKitButtonState {
 		if (_queue.empty()) {
-			return ButtonState::Released;
+			return ButtonReleased;
 		}
 		switch (_queue.front().Buttons.at(static_cast<uint8_t>(button))) {
-		case 1: return ButtonState::Down;
-		case 2: return ButtonState::Up;
-		case 3: return ButtonState::Pressed;
+		case 1: return ButtonDown;
+		case 2: return ButtonUp;
+		case 3: return ButtonPressed;
 		case 0: 
 		default: 
-			return ButtonState::Released;
+			return ButtonReleased;
 		}
 	}
 
-	auto Controller::Type() const -> ControllerType {
+	auto Controller::Type() const -> ControllerKitControllerType {
 		return _type;
 	}
 
@@ -156,7 +155,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			_queue.push(report);
 			return;
 		}
-
+		
 		auto changed = false;
 		auto& lastReport = _queue.back();
 

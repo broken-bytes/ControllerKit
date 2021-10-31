@@ -2,7 +2,7 @@
 
 
 namespace BrokenBytes::ControllerKit::Internal {
-	HIDController::HIDController(DevicePath path, Types::ControllerType type)
+	HIDController::HIDController(DevicePath path, ControllerKitControllerType type)
 	: Controller(type) {
 		this->_path = path;
 		this->_device = nullptr;

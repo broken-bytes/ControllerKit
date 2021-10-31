@@ -17,49 +17,6 @@
 #include <thread>
 
 using namespace BrokenBytes;
-using namespace BrokenBytes::ControllerKit::Types;
-
-void RedirectIOToConsole() {
-
-	//Create a console for this application
-	AllocConsole();
-
-	// Get STDOUT handle
-	HANDLE ConsoleOutput = GetStdHandle(STD_OUTPUT_HANDLE);
-	int SystemOutput = _open_osfhandle(intptr_t(ConsoleOutput), _O_TEXT);
-	FILE* COutputHandle = _fdopen(SystemOutput, "w");
-
-	// Get STDERR handle
-	HANDLE ConsoleError = GetStdHandle(STD_ERROR_HANDLE);
-	int SystemError = _open_osfhandle(intptr_t(ConsoleError), _O_TEXT);
-	FILE* CErrorHandle = _fdopen(SystemError, "w");
-
-	// Get STDIN handle
-	HANDLE ConsoleInput = GetStdHandle(STD_INPUT_HANDLE);
-	int SystemInput = _open_osfhandle(intptr_t(ConsoleInput), _O_TEXT);
-	FILE* CInputHandle = _fdopen(SystemInput, "r");
-
-	//make cout, wcout, cin, wcin, wcerr, cerr, wclog and clog point to console as well
-	std::ios::sync_with_stdio(true);
-
-	// Redirect the CRT standard input, output, and error handles to the console
-	freopen_s(&CInputHandle, "CONIN$", "r", stdin);
-	freopen_s(&COutputHandle, "CONOUT$", "w", stdout);
-	freopen_s(&CErrorHandle, "CONOUT$", "w", stderr);
-
-	//Clear the error state for each of the C++ standard stream objects. We need to do this, as
-	//attempts to access the standard streams before they refer to a valid target will cause the
-	//iostream objects to enter an error state. In versions of Visual Studio after 2005, this seems
-	//to always occur during startup regardless of whether anything has been read from or written to
-	//the console or not.
-	std::wcout.clear();
-	std::cout.clear();
-	std::wcerr.clear();
-	std::cerr.clear();
-	std::wcin.clear();
-	std::cin.clear();
-}
-
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -100,7 +57,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 		return 0;
 	}
 
-	RedirectIOToConsole();
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
 
@@ -109,7 +65,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	ControllerKit::Init();
 	ControllerKit::OnControllerConnected([](
 		uint8_t id,
-		ControllerKit::Types::ControllerType type
+		ControllerKitControllerType type
 		) {
 		});
 	ControllerKit::OnControllerDisconnected([](
@@ -121,47 +77,47 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE, PWSTR pCmdLine, int nCmdShow
 	t = std::thread([]() {
 		while (true) {
 			for (auto item : ControllerKit::Controllers()) {
-				auto input = item.GetAxis(ControllerKit::Types::Axis::LeftTrigger);
-
-				if (input > 0.2f) {
+				auto input = item.GetAxis(RightTrigger);
+				if (input > 0.8f) {
 					item.SetTriggerAdvanced(
-						ControllerKit::Types::Trigger::Left,
+						TriggerRight,
+						1,
+						0,
+						0,
 						1.0f,
-						0.0f,
-						0.6f,
-						1.0f,
-						0.05f,
+						0.04f,
 						false
 					);
 				}
 				else {
-					item.SetTriggerDisabled(ControllerKit::Types::Trigger::Left);
+					item.SetTriggerSectional(TriggerRight, 0.3f, 0.6f, 1);
+					
 				}
 
-				input = item.GetAxis(Axis::RightTrigger);
+				item.SetTriggerSectional(TriggerLeft, 0.3f, 0.6f, 1);
+				input = item.GetAxis(RightTrigger);
 
 
-				item.SetImpulseTrigger(Trigger::Right, input);
+				item.SetImpulseTrigger(RumbleTriggerRight, input / 100);
 
-				auto state = item.GetButtonState(Button::Cross);
-				if (state == ButtonState::Up) {
+				auto state = item.GetButtonState(Cross);
+				if (state == ButtonUp) {
 					item.SetLightbarColor({ 255,0,0 });
 				}
 
-				if (state == ButtonState::Pressed) {
+				if (state == ButtonPressed) {
 					item.SetLightbarColor({ 0,255,0 });
 				}
 
-				if (state == ButtonState::Down) {
+				if (state == ButtonDown) {
 					item.SetLightbarColor({ 0,0,255 });
 				}
 
-				if (state == ButtonState::Released) {
-					item.SetLightbarColor({ 0,0,0 });
+				if (state == ButtonReleased) {
+					item.SetLightbarColor({ 255,0,255 });
 				}
 			}
 			ControllerKit::Next();
-			std::this_thread::sleep_for(std::chrono::milliseconds(10));
 		}
 		}
 	);

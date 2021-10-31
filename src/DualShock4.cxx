@@ -6,12 +6,10 @@
 #include "ControllerKit.hxx"
 #include "Mapper.hxx"
 
-using namespace BrokenBytes::ControllerKit::Math;
-using namespace BrokenBytes::ControllerKit::Types;
 
 namespace BrokenBytes::ControllerKit::Internal {
 	DualShock4::DualShock4(DevicePath path) :
-		HIDController(path, ControllerType::DualShock4),
+		HIDController(path, ControllerDualShock4),
 		IRumbleController(),
 		IGyroscopeController(),
 		ILightbarController(),
@@ -35,7 +33,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 			SetInputReport(Mapping::InputReportFromDualShock4(buffer));
 			if(IsDirty()) {
 				size_t write = DUALSHOCK4_WRITE_REPORT_SIZE;
-				auto crc = GetCRCFromBytes(
+				auto crc = BrokenBytes::ControllerKit::Math::GetCRCFromBytes(
 					_report,
 					DUALSHOCK4_WRITE_REPORT_SIZE - 4
 				);
@@ -72,18 +70,18 @@ namespace BrokenBytes::ControllerKit::Internal {
 	auto DualShock4::ReadAcceleration() -> Math::Vector3<float> {
 		return { 0,0,0 };
 	}
-	void DualShock4::SetLightbarColor(Color c) {
+	void DualShock4::SetLightbarColor(ControllerKitColor c) {
 		_report[6] = c.R;
 		_report[7] = c.G;
 		_report[8] = c.B;
 		SetDirty();
 	}
 
-	auto DualShock4::SetRumble(Rumble motor, uint8_t strength) -> void {
-		if(motor == Rumble::Left) {
+	auto DualShock4::SetRumble(ControllerKitRumble motor, uint8_t strength) -> void {
+		if(motor == RumbleLeft) {
 			_report[4] = strength;
 		}
-		if(motor == Rumble::Right) {
+		if(motor == RumbleRight) {
 			_report[5] = strength;
 		}
 	}

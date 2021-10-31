@@ -6,15 +6,15 @@
 #include "ControllerKit.hxx"
 #include "Controller.hxx"
 #include "Mapper.hxx"
+#include <mutex>
 
 concurrency::critical_section LOCK{};
 
-using namespace BrokenBytes::ControllerKit::Types;
 using namespace winrt::Windows::Gaming::Input;
 
 
 namespace BrokenBytes::ControllerKit::Internal {
-	GamingInputController::GamingInputController() : Controller(Types::ControllerType::XBoxOne), IRumbleController(), IImpulseTriggerController() {
+	GamingInputController::GamingInputController() : Controller(ControllerXBoxOne), IRumbleController(), IImpulseTriggerController() {
 		_vibration = { 0,0,0,0 };
 		_worker = std::thread([this]() {this->Routine(); });
 		if(_gamepads.empty()) {
@@ -49,13 +49,13 @@ namespace BrokenBytes::ControllerKit::Internal {
 		return equal;
 	}
 
-	void GamingInputController::SetRumble(Rumble motor, uint8_t strength) {
+	void GamingInputController::SetRumble(ControllerKitRumble motor, uint8_t strength) {
 		if(_gamepad != nullptr) {
 			auto current = _gamepad->Vibration();
-			if (motor == Rumble::TriggerLeft) {
+			if (motor == RumbleTriggerLeft) {
 				current.LeftTrigger = Math::ConvertToUnsignedFloat(strength);
 			}
-			if (motor == Rumble::TriggerRight) {
+			if (motor == RumbleTriggerRight) {
 				current.RightTrigger = Math::ConvertToUnsignedFloat(strength);
 			}
 			_gamepad->Vibration(current);

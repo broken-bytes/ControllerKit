@@ -7,7 +7,7 @@ using namespace BrokenBytes::ControllerKit::Types;
 
 namespace BrokenBytes::ControllerKit::Internal {
 	DualSense::DualSense(DevicePath path) :
-		HIDController(path, ControllerType::DualSense),
+		HIDController(path, ControllerDualSense),
 		IRumbleController(),
 		IGyroscopeController(),
 		ILightbarController(),
@@ -34,7 +34,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		return { 0,0,0 };
 	}
 
-	auto DualSense::SetLightbarColor(Color c) -> void {
+	auto DualSense::SetLightbarColor(ControllerKitColor c) -> void {
 		_report[45] = c.R;
 		_report[46] = c.G;
 		_report[47] = c.B;
@@ -42,20 +42,20 @@ namespace BrokenBytes::ControllerKit::Internal {
 		SetDirty();
 	}
 
-	auto DualSense::SetRumble(Rumble motor, uint8_t strength) -> void {
+	auto DualSense::SetRumble(ControllerKitRumble motor, uint8_t strength) -> void {
 		SetDirty();
 	}
 
 	auto DualSense::SetTrigger(
-		Trigger trigger,
-		AdaptiveTriggerMode mode,
+		ControllerKitTrigger trigger,
+		ControllerKitAdaptiveTriggerMode mode,
 		Params params
 	) -> void {
-		const auto trPerm = (trigger == Trigger::Left) ?
+		const auto trPerm = (trigger == TriggerLeft) ?
 			Permission1::LeftTrigger :
 			Permission1::RightTrigger;
 		SetPermission(trPerm, Permission2::MotorPower);
-		if (trigger == Trigger::Right) {
+		if (trigger == TriggerRight) {
 			_report[11] = static_cast<uint8_t>(mode);
 			_report[12] = params.Start;
 			_report[13] = params.ForceOrEnd;

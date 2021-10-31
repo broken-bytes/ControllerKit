@@ -16,7 +16,7 @@ namespace BrokenBytes::ControllerKit::Interface {
 	auto GetControllers()->std::map<uint8_t, Internal::Controller*>;
 	auto Flush() -> void;
 	auto Next() -> void;
-	auto OnControllerConnected(std::function<void(uint8_t id, Types::ControllerType type)> controller) -> void;
+	auto OnControllerConnected(std::function<void(uint8_t id, ControllerKitControllerType type)> controller) -> void;
 	auto OnControllerDisconnected(std::function<void(uint8_t id)> controller) -> void;
 	auto QueryDevices() -> void;
 	auto SetData(uint8_t controller, unsigned char* data) -> void;

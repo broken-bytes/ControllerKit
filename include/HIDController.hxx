@@ -11,7 +11,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 	
 	class HIDController : public Controller {
 	public:
-		HIDController(DevicePath path, Types::ControllerType type);
+		HIDController(DevicePath path, ControllerKitControllerType type);
 		virtual ~HIDController();
 		auto Equals(void* data) -> bool override;
 

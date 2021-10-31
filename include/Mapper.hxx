@@ -6,7 +6,6 @@
 #include <winrt/Windows.Gaming.Input.h>
 #include "ControllerKit.hxx"
 
-using namespace BrokenBytes::ControllerKit::Types;
 using namespace winrt::Windows::Gaming::Input;
 
 namespace BrokenBytes::ControllerKit::Mapping {
@@ -28,43 +27,43 @@ namespace BrokenBytes::ControllerKit::Mapping {
 	inline auto InputReportFromXBoxOne(const GamepadReading& input)->Internal::InputReport {
 		auto buttons = std::map<uint8_t, uint8_t>();
 		buttons.emplace(
-			static_cast<uint8_t>(Button::A),
+			static_cast<uint8_t>(A),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::A)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::B),
+			static_cast<uint8_t>(B),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::B)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::X),
+			static_cast<uint8_t>(X),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::X)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::Y),
+			static_cast<uint8_t>(Y),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::Y)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::LB),
+			static_cast<uint8_t>(LB),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::LeftShoulder)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::RB),
+			static_cast<uint8_t>(RB),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::RightShoulder)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::View),
+			static_cast<uint8_t>(View),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::View)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::Menu),
+			static_cast<uint8_t>(Menu),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::Menu)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::L3),
+			static_cast<uint8_t>(L3),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::LeftThumbstick)
 		);
 		buttons.emplace(
-			static_cast<uint8_t>(Button::R3),
+			static_cast<uint8_t>(R3),
 			static_cast<uint8_t>(input.Buttons & GamepadButtons::RightThumbstick)
 		);
 
@@ -98,53 +97,53 @@ namespace BrokenBytes::ControllerKit::Mapping {
 	inline auto InputReportFromDualShock4(unsigned char* input)->Internal::InputReport {
 		auto buttons = std::map<uint8_t, uint8_t>();
 		std::bitset<8> buff5(input[5]);
-		buttons.emplace(static_cast<uint8_t>(Button::Cross), buff5[5]);
-		buttons.emplace(static_cast<uint8_t>(Button::Square), buff5[4]);
-		buttons.emplace(static_cast<uint8_t>(Button::Circle), buff5[6]);
-		buttons.emplace(static_cast<uint8_t>(Button::Triangle), buff5[7]);
+		buttons.emplace(static_cast<uint8_t>(Cross), buff5[5]);
+		buttons.emplace(static_cast<uint8_t>(Square), buff5[4]);
+		buttons.emplace(static_cast<uint8_t>(Circle), buff5[6]);
+		buttons.emplace(static_cast<uint8_t>(Triangle), buff5[7]);
 
 		std::bitset<8> buff6(input[6]);
-		buttons.emplace(static_cast<uint8_t>(Button::L1), buff6[0]);
-		buttons.emplace(static_cast<uint8_t>(Button::R1), buff6[1]);
-		buttons.emplace(static_cast<uint8_t>(Button::R2), buff6[2]);
-		buttons.emplace(static_cast<uint8_t>(Button::L2), buff6[3]);
-		buttons.emplace(static_cast<uint8_t>(Button::Share), buff6[4]);
-		buttons.emplace(static_cast<uint8_t>(Button::Options), buff6[5]);
-		buttons.emplace(static_cast<uint8_t>(Button::L3), buff6[6]);
-		buttons.emplace(static_cast<uint8_t>(Button::R3), buff6[7]);
+		buttons.emplace(static_cast<uint8_t>(L1), buff6[0]);
+		buttons.emplace(static_cast<uint8_t>(R1), buff6[1]);
+		buttons.emplace(static_cast<uint8_t>(R2), buff6[2]);
+		buttons.emplace(static_cast<uint8_t>(L2), buff6[3]);
+		buttons.emplace(static_cast<uint8_t>(Share), buff6[4]);
+		buttons.emplace(static_cast<uint8_t>(Options), buff6[5]);
+		buttons.emplace(static_cast<uint8_t>(L3), buff6[6]);
+		buttons.emplace(static_cast<uint8_t>(R3), buff6[7]);
 
 		std::bitset<8> buff7(input[6]);
-		buttons.emplace(static_cast<uint8_t>(Button::PS), buff6[0]);
-		buttons.emplace(static_cast<uint8_t>(Button::TouchPad), buff6[1]);
+		buttons.emplace(static_cast<uint8_t>(PS), buff6[0]);
+		buttons.emplace(static_cast<uint8_t>(TouchPad), buff6[1]);
 
-		DPadDirection dpad = DPadDirection::None;
+		ControllerKitDPadDirection dpad = DPadNone;
 		switch (input[5] & 0x000F) {
 		case static_cast<uint8_t>(DS_DPad_Bin::Up):
-			dpad = DPadDirection::Up;
+			dpad = DPadUp;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::RightUp) :
-			dpad = DPadDirection::RightUp;
+			dpad = DPadRightUp;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::Right) :
-			dpad = DPadDirection::Right;
+			dpad = DPadRight;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::RightDown) :
-			dpad = DPadDirection::RightDown;
+			dpad = DPadRightDown;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::Down) :
-			dpad = DPadDirection::Down;
+			dpad = DPadDown;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::LeftDown):
-			dpad = DPadDirection::LeftDown;
+			dpad = DPadLeftDown;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::Left) :
-			dpad = DPadDirection::Left;
+			dpad = DPadLeft;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::LeftUp) :
-			dpad = DPadDirection::LeftUp;
+			dpad = DPadLeftUp;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::None) :
-			dpad = DPadDirection::None;
+			dpad = DPadNone;
 			break;
 		}
 
@@ -167,50 +166,50 @@ namespace BrokenBytes::ControllerKit::Mapping {
 
 	inline auto InputReportFromDualSense(unsigned char* input)->Internal::InputReport {
 		auto buttons = std::map<uint8_t, uint8_t>();
-		buttons.emplace(static_cast<uint8_t>(Button::Cross), (bool)(input[8] & 0x20));
-		buttons.emplace(static_cast<uint8_t>(Button::Square), (bool)(input[8] & 0x10));
-		buttons.emplace(static_cast<uint8_t>(Button::Circle), (bool)(input[8] & 0x40));
-		buttons.emplace(static_cast<uint8_t>(Button::Triangle), (bool)(input[8] & 0x80));
-		buttons.emplace(static_cast<uint8_t>(Button::L1), (bool)(input[9] & 0x01));
-		buttons.emplace(static_cast<uint8_t>(Button::R1), (bool)(input[9] & 0x02));
-		buttons.emplace(static_cast<uint8_t>(Button::L2), (bool)(input[9] & 0x04));
-		buttons.emplace(static_cast<uint8_t>(Button::R2), (bool)(input[9] & 0x08));
-		buttons.emplace(static_cast<uint8_t>(Button::Create), (bool)(input[9] & 0x10));
-		buttons.emplace(static_cast<uint8_t>(Button::Options), (bool)(input[9] & 0x20));
-		buttons.emplace(static_cast<uint8_t>(Button::L3), (bool)(input[9] & 0x40));
-		buttons.emplace(static_cast<uint8_t>(Button::R3), (bool)(input[9] & 0x80));
-		buttons.emplace(static_cast<uint8_t>(Button::PS), (bool)(input[10] & 0x01));
-		buttons.emplace(static_cast<uint8_t>(Button::PS_MUTE), (bool)(input[10] & 0x04));
-		buttons.emplace(static_cast<uint8_t>(Button::TouchPad), (bool)(input[10] & 0x02));
+		buttons.emplace(static_cast<uint8_t>(Cross), (bool)(input[8] & 0x20));
+		buttons.emplace(static_cast<uint8_t>(Square), (bool)(input[8] & 0x10));
+		buttons.emplace(static_cast<uint8_t>(Circle), (bool)(input[8] & 0x40));
+		buttons.emplace(static_cast<uint8_t>(Triangle), (bool)(input[8] & 0x80));
+		buttons.emplace(static_cast<uint8_t>(L1), (bool)(input[9] & 0x01));
+		buttons.emplace(static_cast<uint8_t>(R1), (bool)(input[9] & 0x02));
+		buttons.emplace(static_cast<uint8_t>(L2), (bool)(input[9] & 0x04));
+		buttons.emplace(static_cast<uint8_t>(R2), (bool)(input[9] & 0x08));
+		buttons.emplace(static_cast<uint8_t>(Create), (bool)(input[9] & 0x10));
+		buttons.emplace(static_cast<uint8_t>(Options), (bool)(input[9] & 0x20));
+		buttons.emplace(static_cast<uint8_t>(L3), (bool)(input[9] & 0x40));
+		buttons.emplace(static_cast<uint8_t>(R3), (bool)(input[9] & 0x80));
+		buttons.emplace(static_cast<uint8_t>(PS), (bool)(input[10] & 0x01));
+		buttons.emplace(static_cast<uint8_t>(PS_MUTE), (bool)(input[10] & 0x04));
+		buttons.emplace(static_cast<uint8_t>(TouchPad), (bool)(input[10] & 0x02));
 
-		DPadDirection dpad = DPadDirection::None;
+		ControllerKitDPadDirection dpad = DPadNone;
 		switch (input[8] & 0x000F) {
 		case static_cast<uint8_t>(DS_DPad_Bin::Up) :
-			dpad = DPadDirection::Up;
+			dpad = DPadUp;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::RightUp) :
-			dpad = DPadDirection::RightUp;
+			dpad = DPadRightUp;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::Right) :
-			dpad = DPadDirection::Right;
+			dpad = DPadRight;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::RightDown) :
-			dpad = DPadDirection::RightDown;
+			dpad = DPadRightDown;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::Down) :
-			dpad = DPadDirection::Down;
+			dpad = DPadDown;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::LeftDown) :
-			dpad = DPadDirection::LeftDown;
+			dpad = DPadLeftDown;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::Left) :
-			dpad = DPadDirection::Left;
+			dpad = DPadLeft;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::LeftUp) :
-			dpad = DPadDirection::LeftUp;
+			dpad = DPadLeftUp;
 			break;
 		case static_cast<uint8_t>(DS_DPad_Bin::None) :
-			dpad = DPadDirection::None;
+			dpad = DPadNone;
 			break;
 		}
 

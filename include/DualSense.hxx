@@ -7,14 +7,6 @@
 #include "interfaces/IAdaptiveTriggerController.hxx"
 #include "interfaces/ITouchpadController.hxx"
 
-namespace BrokenBytes::ControllerKit::Types {
-	enum class Trigger;
-	enum class ControllerType;
-	enum class ButtonState;
-	enum class Button;
-	enum class DPadDirection;
-}
-
 
 namespace BrokenBytes::ControllerKit::Internal {
 	constexpr uint8_t DUALSENSE_READ_REPORT_SIZE = 64;
@@ -40,12 +32,12 @@ namespace BrokenBytes::ControllerKit::Internal {
 		
 		auto ReadGyroscope() -> Math::Vector3<float> override;
 		auto ReadAcceleration() -> Math::Vector3<float> override;
-		auto SetLightbarColor(Types::Color c) -> void override;
-		auto SetRumble(Types::Rumble motor, uint8_t strength) -> void override;
+		auto SetLightbarColor(ControllerKitColor c) -> void override;
+		auto SetRumble(ControllerKitRumble motor, uint8_t strength) -> void override;
 		auto GetTouches()->std::vector<Math::Vector2<float>> override;
 		auto SetTrigger(
-			Types::Trigger trigger,
-			Types::AdaptiveTriggerMode mode,
+			ControllerKitTrigger trigger,
+			ControllerKitAdaptiveTriggerMode mode,
 			Params params
 		) -> void override;
 	private:
@@ -75,7 +67,7 @@ namespace BrokenBytes::ControllerKit::Internal {
 		std::thread _thread;
 		uint8_t _reportPermissionFlags;
 		unsigned char* _report;
-		Types::Color* _color;
+		ControllerKitColor* _color;
 
 		auto SetDirty() -> void override;
 		auto SetClear() -> void override;

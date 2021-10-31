@@ -20,13 +20,14 @@
 #include "Controller.hxx"
 #include "Interface.hxx"
 #include "USB.hxx"
+#include <Types.h>
 
 
 using namespace BrokenBytes::ControllerKit;
 using namespace Types;
 
 namespace BrokenBytes::ControllerKit {
-	Controller::Controller(uint8_t player, Types::ControllerType type) {
+	Controller::Controller(uint8_t player, ControllerKitControllerType type) {
 		_player = player;
 		_type = type;
 	}
@@ -35,40 +36,40 @@ namespace BrokenBytes::ControllerKit {
 		return _player;
 	}
 
-	[[nodiscard]] auto Controller::Type() const ->Types::ControllerType {
+	[[nodiscard]] auto Controller::Type() const ->ControllerKitControllerType {
 		return _type;
 	}
 
 	[[nodiscard]] auto Controller::HasFeature(
 		uint8_t controller,
-		Types::Feature feature
+		ControllerKitFeature feature
 	) const -> bool {
 		auto raw = Interface::GetControllers()[_player];
 		switch (feature) {
-		case Types::Feature::Rumble:
+		case ControllerKitFeature::Rumble:
 			return true;
 			break;
-		case Types::Feature::Gyroscope:
+		case ControllerKitFeature::Gyroscope:
 			if (dynamic_cast<Internal::IGyroscopeController*>(raw)) {
 				return true;
 			}
 			break;
-		case Types::Feature::Lightbar:
+		case ControllerKitFeature::Lightbar:
 			if (dynamic_cast<Internal::ILightbarController*>(raw)) {
 				return true;
 			}
 			break;
-		case Types::Feature::AdaptiveTriggers:
+		case ControllerKitFeature::AdaptiveTriggers:
 			if (dynamic_cast<Internal::IAdaptiveTriggerController*>(raw)) {
 				return true;
 			}
 			break;
-		case Types::Feature::ImpulseTriggers:
+		case ControllerKitFeature::ImpulseTriggers:
 			if (dynamic_cast<Internal::IImpulseTriggerController*>(raw)) {
 				return true;
 			}
 			break;
-		case Types::Feature::Touchpad:
+		case ControllerKitFeature::Touchpad:
 			if (dynamic_cast<Internal::ITouchpadController*>(raw)) {
 				return true;
 			}
@@ -80,32 +81,32 @@ namespace BrokenBytes::ControllerKit {
 	}
 
 	[[nodiscard]] auto Controller::GetButtonState(
-		Types::Button button
-	) const -> Types::ButtonState {
+		ControllerKitButton button
+	) const -> ControllerKitButtonState {
 		return Interface::GetControllers()[_player]->GetButtonState(button);
 	}
 
 	[[nodiscard]] auto Controller::GetAxis(
-		Types::Axis axis
+		ControllerKitAxis axis
 	) const -> float {
 		switch (axis) {
-		case Types::Axis::LeftX:
+		case ControllerKitAxis::LeftX:
 			return Interface::GetControllers()[_player]->GetStick(0).X;
-		case Types::Axis::LeftY:
+		case ControllerKitAxis::LeftY:
 			return Interface::GetControllers()[_player]->GetStick(0).Y;
-		case Types::Axis::RightX:
+		case ControllerKitAxis::RightX:
 			return Interface::GetControllers()[_player]->GetStick(1).X;
-		case Types::Axis::RightY:
+		case ControllerKitAxis::RightY:
 			return Interface::GetControllers()[_player]->GetStick(1).Y;
-		case Types::Axis::LeftTrigger:
-			return Interface::GetControllers()[_player]->GetTrigger(Types::Trigger::Left);
-		case Types::Axis::RightTrigger:
-			return Interface::GetControllers()[_player]->GetTrigger(Types::Trigger::Right);
+		case ControllerKitAxis::LeftTrigger:
+			return Interface::GetControllers()[_player]->GetTrigger(TriggerLeft);
+		case ControllerKitAxis::RightTrigger:
+			return Interface::GetControllers()[_player]->GetTrigger(TriggerRight);
 		}
 		return 0;
 	}
 
-	auto Controller::SetTriggerDisabled(Types::Trigger trigger) -> void {
+	auto Controller::SetTriggerDisabled(ControllerKitTrigger trigger) -> void {
 		auto* raw = Interface::GetControllers()[Player()];
 		Internal::IAdaptiveTriggerController::Params params{
 			0xFF,
@@ -119,45 +120,45 @@ namespace BrokenBytes::ControllerKit {
 			false,
 			0xFF
 		};
-		if (Type() == Types::ControllerType::DualSense) {
+		if (Type() == ControllerDualSense) {
 			dynamic_cast<Internal::DualSense*>(raw)->SetTrigger(
 				trigger,
-				Types::AdaptiveTriggerMode::Disabled,
+				ControllerKitAdaptiveTriggerMode::Disabled,
 				params
 			);
 		}
 	}
 
-	auto Controller::SetTriggerContinuous(Types::Trigger trigger, float start, float force) const -> void {
+	auto Controller::SetTriggerContinuous(ControllerKitTrigger trigger, float start, float force) const -> void {
 		auto* raw = Interface::GetControllers()[Player()];
 		Internal::IAdaptiveTriggerController::Params params{};
 		params.ForceOrEnd = Math::ConvertToUnsignedShort(force);
 		params.Start = Math::ConvertToUnsignedShort(start);
-		if (Type() == Types::ControllerType::DualSense) {
+		if (Type() == ControllerDualSense) {
 			dynamic_cast<Internal::DualSense*>(raw)->SetTrigger(
 				trigger,
-				Types::AdaptiveTriggerMode::Continuous,
+				ControllerKitAdaptiveTriggerMode::Continuous,
 				params
 			);
 		}
 	}
 
-	auto Controller::SetTriggerSectional(Types::Trigger trigger, float start, float end, float force) const -> void {
+	auto Controller::SetTriggerSectional(ControllerKitTrigger trigger, float start, float end, float force) const -> void {
 		auto* raw = Interface::GetControllers()[Player()];
 		Internal::IAdaptiveTriggerController::Params params{};
 		params.ForceOrEnd = Math::ConvertToUnsignedShort(end);
 		params.Start = Math::ConvertToUnsignedShort(start);
 		params.ForceInRange = Math::ConvertToUnsignedShort(force);
-		if (Type() == Types::ControllerType::DualSense) {
+		if (Type() == ControllerDualSense) {
 			dynamic_cast<Internal::DualSense*>(raw)->SetTrigger(
 				trigger,
-				Types::AdaptiveTriggerMode::Sectional,
+				ControllerKitAdaptiveTriggerMode::Sectional,
 				params
 			);
 		}
 	}
 
-	auto Controller::SetTriggerAdvanced(Types::Trigger trigger, float extension, float strengthReleased, float strengthMiddle, float strengthPressed, float frequency, bool pauseOnPressed) const -> void {
+	auto Controller::SetTriggerAdvanced(ControllerKitTrigger trigger, float extension, float strengthReleased, float strengthMiddle, float strengthPressed, float frequency, bool pauseOnPressed) const -> void {
 		auto* raw = Interface::GetControllers()[Player()];
 		Internal::IAdaptiveTriggerController::Params params{};
 		params.ForceOrEnd = (pauseOnPressed) ? 0x00 : 0x02;
@@ -169,26 +170,26 @@ namespace BrokenBytes::ControllerKit {
 			Math::ConvertToUnsignedShort(strengthPressed)
 		};
 		params.Frequency = Math::ConvertToUnsignedShort(frequency);
-		if (Type() == Types::ControllerType::DualSense) {
+		if (Type() == ControllerDualSense) {
 			dynamic_cast<Internal::DualSense*>(raw)->SetTrigger(
 				trigger,
-				Types::AdaptiveTriggerMode::Advanced,
+				ControllerKitAdaptiveTriggerMode::Advanced,
 				params
 			);
 		}
 	}
 
-	auto Controller::SetLightbarColor(Types::Color color) const -> void {
+	auto Controller::SetLightbarColor(ControllerKitColor color) const -> void {
 		auto raw = Interface::GetControllers()[Player()];
-		if (Type() == Types::ControllerType::DualSense) {
+		if (Type() == ControllerDualSense) {
 			dynamic_cast<Internal::DualSense*>(raw)->SetLightbarColor(color);
 		}
-		if (Type() == Types::ControllerType::DualShock4) {
+		if (Type() == ControllerDualShock4) {
 			dynamic_cast<Internal::DualShock4*>(raw)->SetLightbarColor(color);
 		}
 	}
 
-	[[nodiscard]] auto Controller::GetTouches() const -> std::vector<Types::Touch> {
+	[[nodiscard]] auto Controller::GetTouches() const -> std::vector<ControllerKitTouch> {
 		auto* c = dynamic_cast<Internal::ITouchpadController*>(
 			Interface::GetControllers()[Player()]
 			);
@@ -200,8 +201,8 @@ namespace BrokenBytes::ControllerKit {
 	}
 
 	[[nodiscard]] auto Controller::GetGyroscope(
-		Types::Button button
-	) const -> Types::Gyroscope {
+		ControllerKitButton button
+	) const -> ControllerKitGyroscope {
 		auto* c = dynamic_cast<Internal::IGyroscopeController*>(
 			Interface::GetControllers()[Player()]
 			);
@@ -210,8 +211,8 @@ namespace BrokenBytes::ControllerKit {
 	}
 
 	[[nodiscard]] auto Controller::GetAcceleration(
-		Types::Button button
-	) const -> Types::Gyroscope {
+		ControllerKitButton button
+	) const ->ControllerKitGyroscope {
 		auto* c = dynamic_cast<Internal::IGyroscopeController*>(
 			Interface::GetControllers()[Player()]
 			);
@@ -219,14 +220,14 @@ namespace BrokenBytes::ControllerKit {
 		return { gyro.X, gyro.Y, gyro.Z };
 	}
 
-	auto Controller::SetImpulseTrigger(Types::Trigger trigger, float strength) -> void {
+	auto Controller::SetImpulseTrigger(ControllerKitRumble trigger, float strength) -> void {
 		auto raw = Interface::GetControllers()[Player()];
-		if (Type() == Types::ControllerType::XBoxOne ||
-			Type() == Types::ControllerType::XBoxSeries
+		if (Type() == ControllerXBoxOne ||
+			Type() == ControllerXBoxSeries
 			) {
-			auto motor = (trigger == Types::Trigger::Left) ?
-				Types::Rumble::TriggerLeft :
-				Types::Rumble::TriggerRight;
+			auto motor = (trigger == RumbleTriggerLeft) ?
+				RumbleTriggerLeft :
+				RumbleTriggerRight;
 			reinterpret_cast<Internal::GamingInputController*>(raw)->SetRumble(
 				motor,
 				Math::ConvertToUnsignedShort(strength)
@@ -247,7 +248,7 @@ namespace BrokenBytes::ControllerKit {
 		return list;
 	}
 
-	auto GetControllerType(int controller) -> Types::ControllerType {
+	auto GetControllerType(int controller) ->ControllerKitControllerType {
 		return Interface::GetControllers()[controller]->Type();
 	}
 
@@ -259,7 +260,7 @@ namespace BrokenBytes::ControllerKit {
 		Interface::Next();
 	}
 
-	auto OnControllerConnected(std::function<void(uint8_t id, ControllerType type)> controller) -> void {
+	auto OnControllerConnected(std::function<void(uint8_t id, ControllerKitControllerType type)> controller) -> void {
 		Interface::OnControllerConnected(std::move(controller));
 	}
 	auto OnControllerDisconnected(std::function<void(uint8_t id)> controller) -> void {

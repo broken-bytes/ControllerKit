@@ -13,159 +13,52 @@
 #endif
 #endif
 
-namespace BrokenBytes::ControllerKit::Types {
-	struct Color {
-		uint8_t R;
-		uint8_t G;
-		uint8_t B;
-	};
-
-	struct Stick {
-		float X;
-		float Y;
-	};
-
-	struct Touch {
-		float X;
-		float Y;
-		uint8_t Index;
-	};
-
-	struct Gyroscope {
-		float X;
-		float Y;
-		float Z;
-	};
-
-	enum class Feature {
-		Rumble,
-		Gyroscope,
-		Lightbar,
-		AdaptiveTriggers,
-		ImpulseTriggers,
-		Touchpad
-	};
-
-	enum class ButtonState {
-		Down,
-		Pressed,
-		Up,
-		Released
-	};
-
-	enum class DPadDirection {
-		None,
-		Left = 1,
-		Up = 2,
-		LeftUp = 3,
-		Right = 4,
-		RightUp = 6,
-		Down = 8,
-		LeftDown = 9,
-		RightDown = 12
-	};
-
-	enum class Trigger {
-		Left,
-		Right
-	};
-
-	enum class Rumble {
-		Left,
-		Right,
-		TriggerLeft,
-		TriggerRight
-	};
-
-	enum class ControllerType {
-		XBoxOne,
-		XBoxSeries,
-		DualShock4,
-		DualSense,
-		Generic
-	};
-
-	enum class Axis {
-		LeftX,
-		LeftY,
-		RightX,
-		RightY,
-		LeftTrigger,
-		RightTrigger
-	};
-
-	enum class Button {
-		Button0, Cross = 0, A = 0,
-		Button1, Square = 1, X = 1,
-		Button2, Circle = 2, B = 2,
-		Button3, Triangle = 3, Y = 3,
-		Button4, L1 = 4, LB = 4,
-		Button5, R1 = 5, RB = 5,
-		Button6, L2 = 6, LT = 6,
-		Button7, R2 = 7, RT = 7,
-		Button8, Share = 8, Create = 8, View = 8,
-		Button9, Options = 9, Menu = 9,
-		Button10, L3 = 10,
-		Button11, R3 = 11,
-		Button12, PS = 12, XBox = 12,
-		Button13, TouchPad = 13, XBox_Share = 13,
-		Button14, PS_MUTE = 14,
-		Button15 = 15,
-		Button16 = 16
-	};
-
-	enum class AdaptiveTriggerMode {
-		Disabled = 0x00,
-		Continuous = 0x01,
-		Sectional = 0x02,
-		Advanced = 0x26
-	};
-}
+#include <Types.h>
 
 namespace BrokenBytes::ControllerKit {
 	class GyroController {
 	public:
 		virtual ~GyroController() = default;
 		[[nodiscard]] virtual auto GetGyroscope(
-			Types::Button button
-		) const->Types::Gyroscope = 0;
+			ControllerKitButton button
+		) const->ControllerKitGyroscope = 0;
 		[[nodiscard]] virtual auto GetAcceleration(
-			Types::Button button
-		) const->Types::Gyroscope = 0;
+			ControllerKitButton button
+		) const->ControllerKitGyroscope = 0;
 	};
 
 	class TouchpadController {
 	public:
 		virtual ~TouchpadController() = default;
-		[[nodiscard]] virtual auto GetTouches() const -> 
-			std::vector <Types::Touch> = 0;
+		[[nodiscard]] virtual auto GetTouches() const ->
+			std::vector <ControllerKitTouch> = 0;
 	};
 
 	class LightbarController {
 	public:
 		virtual ~LightbarController() = default;
-		virtual auto SetLightbarColor(Types::Color color) const -> void = 0;
+		virtual auto SetLightbarColor(ControllerKitColor color) const -> void = 0;
 	};
 
 	class AdaptiveTriggerController {
 	public:
 		virtual ~AdaptiveTriggerController() = default;
-		virtual auto SetTriggerDisabled(Types::Trigger trigger) -> void = 0;
+		virtual auto SetTriggerDisabled(ControllerKitTrigger trigger) -> void = 0;
 		virtual auto SetTriggerContinuous(
-			Types::Trigger trigger,
+			ControllerKitTrigger trigger,
 			float start,
 			float force
 		) const -> void = 0;
 
 		virtual auto SetTriggerSectional(
-			Types::Trigger trigger,
+			ControllerKitTrigger trigger,
 			float start,
 			float end,
 			float force
 		) const -> void = 0;
 
 		virtual auto SetTriggerAdvanced(
-			Types::Trigger trigger,
+			ControllerKitTrigger trigger,
 			float extension,
 			float strengthReleased,
 			float strengthMiddle,
@@ -177,7 +70,7 @@ namespace BrokenBytes::ControllerKit {
 
 	class ImpulseTriggerController {
 	public:
-		virtual auto SetImpulseTrigger(Types::Trigger trigger, float strength) -> void = 0;
+		virtual auto SetImpulseTrigger(ControllerKitRumble trigger, float strength) -> void = 0;
 	};
 
 	class Controller :
@@ -187,48 +80,48 @@ namespace BrokenBytes::ControllerKit {
 		public GyroController,
 		public ImpulseTriggerController {
 	public:
-		Controller(uint8_t player, Types::ControllerType type);
+		Controller(uint8_t player, ControllerKitControllerType type);
 
 		virtual ~Controller() = default;
 
 		[[nodiscard]] virtual auto Player() const->uint8_t;
-		[[nodiscard]] virtual auto Type() const->Types::ControllerType;
+		[[nodiscard]] virtual auto Type() const->ControllerKitControllerType;
 
 		[[nodiscard]] virtual auto HasFeature(
 			uint8_t controller,
-			Types::Feature feature
+			ControllerKitFeature feature
 		) const -> bool;
 
 		[[nodiscard]] virtual auto GetButtonState(
-			Types::Button button
-		) const->Types::ButtonState;
+			ControllerKitButton button
+		) const->ControllerKitButtonState;
 
 		[[nodiscard]] virtual auto GetAxis(
-			Types::Axis axis
+			ControllerKitAxis axis
 		) const -> float;
-		auto SetTriggerDisabled(Types::Trigger trigger) -> void override;
+		auto SetTriggerDisabled(ControllerKitTrigger trigger) -> void override;
 
-		auto SetTriggerContinuous(Types::Trigger trigger, float start, float force) const -> void override;
+		auto SetTriggerContinuous(ControllerKitTrigger trigger, float start, float force) const -> void override;
 
-		auto SetTriggerSectional(Types::Trigger trigger, float start, float end, float force) const -> void override;
-		auto SetTriggerAdvanced(Types::Trigger trigger, float extension, float strengthReleased, float strengthMiddle, float strengthPressed, float frequency, bool pauseOnPressed) const -> void override;
-		auto SetLightbarColor(Types::Color color) const -> void override;
+		auto SetTriggerSectional(ControllerKitTrigger trigger, float start, float end, float force) const -> void override;
+		auto SetTriggerAdvanced(ControllerKitTrigger trigger, float extension, float strengthReleased, float strengthMiddle, float strengthPressed, float frequency, bool pauseOnPressed) const -> void override;
+		auto SetLightbarColor(ControllerKitColor color) const -> void override;
 
-		auto GetTouches() const->std::vector <Types::Touch> override;
+		auto GetTouches() const->std::vector <ControllerKitTouch> override;
 
 		[[nodiscard]] auto GetGyroscope(
-			Types::Button button
-		) const->Types::Gyroscope override;
+			ControllerKitButton button
+		) const->ControllerKitGyroscope override;
 
 		[[nodiscard]] auto GetAcceleration(
-			Types::Button button
-		) const->Types::Gyroscope override;
+			ControllerKitButton button
+		) const->ControllerKitGyroscope override;
 
-		auto SetImpulseTrigger(Types::Trigger trigger, float strength) -> void override;
+		auto SetImpulseTrigger(ControllerKitRumble trigger, float strength) -> void override;
 
 	private:
 		uint8_t _player;
-		Types::ControllerType _type;
+		ControllerKitControllerType _type;
 	};
 
 	/// <summary>
@@ -241,7 +134,7 @@ namespace BrokenBytes::ControllerKit {
 	/// </summary>
 	/// <returns>The list of controllers</returns>
 	DLL_EXPORT auto Controllers()->std::vector<Controller>;
-	DLL_EXPORT auto GetControllerType(int controller)->Types::ControllerType;
+	DLL_EXPORT auto GetControllerType(int controller)->ControllerKitControllerType;
 	/// <summary>
 	/// Clears the input queue
 	/// </summary>
@@ -258,7 +151,7 @@ namespace BrokenBytes::ControllerKit {
 	/// <param name="controller"></param>
 	/// <returns></returns>
 	DLL_EXPORT auto OnControllerConnected(
-		std::function<void(uint8_t id, Types::ControllerType type)> controller
+		std::function<void(uint8_t id, ControllerKitControllerType type)> controller
 	) -> void;
 	/// <summary>
 	/// Assigns the disconnected event callback
